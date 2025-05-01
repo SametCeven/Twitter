@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  twitter-server:
+    build:
+      context: ./twitter-server/twitter
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    ports:
+      - "9000:9000"
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - ./target/classes:/app/target/classes
+    restart: unless-stopped
+
+  twitter-client:
+    build:
+      context: ./twitter-client
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - twitter-server
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+volumes:
+  postgres_data:
