@@ -10,8 +10,8 @@ import java.util.List;
 public interface LikeService {
     List<Like> getALl();
     Like getById(Long id);
-    Like save(Like like, Tweet tweet, Comment comment, User user);
-    Like put(Long id, Like like, Tweet tweet, Comment comment, User user);
+    Like save(Like like, Comment comment, Tweet tweet, User user);
+    Like put(Long id, Like like, Comment comment, Tweet tweet, User user);
     Like patch(Long id, Like like);
     void delete(Long id);
 

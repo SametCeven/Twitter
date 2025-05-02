@@ -34,7 +34,7 @@ public class LikeServiceImpl implements LikeService{
     }
 
     @Override
-    public Like save(Like like, Tweet tweet, Comment comment, User user) {
+    public Like save(Like like, Comment comment, Tweet tweet, User user) {
         if(tweet != null) tweet.addLike(like);
         if(comment != null) comment.addLikes(like);
         user.addLikes(like);
@@ -42,7 +42,7 @@ public class LikeServiceImpl implements LikeService{
     }
 
     @Override
-    public Like put(Long id, Like like,Tweet tweet, Comment comment, User user) {
+    public Like put(Long id, Like like, Comment comment, Tweet tweet, User user) {
         Optional<Like> likeOptional = likeRepository.findById(id);
         if(likeOptional.isPresent()){
             like.setId(id);

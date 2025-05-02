@@ -1,5 +1,6 @@
 package com.example.twitter.service;
 
+import com.example.twitter.entity.Comment;
 import com.example.twitter.entity.Retweet;
 import com.example.twitter.entity.Tweet;
 import com.example.twitter.entity.User;
@@ -34,21 +35,23 @@ public class RetweetServiceImpl implements RetweetService{
     }
 
     @Override
-    public Retweet save(Retweet retweet, Tweet tweet, User user) {
+    public Retweet save(Retweet retweet, Comment comment, Tweet tweet, User user) {
         user.addRetweet(retweet);
-        tweet.addRetweet(retweet);
+        if(tweet != null) tweet.addRetweet(retweet);
+        if(comment != null) comment.addRetweet(retweet);
         return retweetRepository.save(retweet);
     }
 
     @Override
-    public Retweet put(Long id, Retweet retweet,Tweet tweet, User user) {
+    public Retweet put(Long id, Retweet retweet, Comment comment, Tweet tweet, User user) {
         Optional<Retweet> retweetOptional = retweetRepository.findById(id);
         if(retweetOptional.isPresent()){
             retweet.setId(id);
             return retweetRepository.save(retweet);
         }
         user.addRetweet(retweet);
-        tweet.addRetweet(retweet);
+        if(tweet != null) tweet.addRetweet(retweet);
+        if(comment != null) comment.addRetweet(retweet);
         return retweetRepository.save(retweet);
     }
 
