@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Entity
-@Table(name = "tweets", schema = "twitter")
+@Table(name = "tweets", schema = "twit")
 public class Tweet {
 
     @Id

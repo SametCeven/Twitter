@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Entity
-@Table(name = "comments", schema = "twitter")
+@Table(name = "comments", schema = "twit")
 public class Comment {
 
     @Id
