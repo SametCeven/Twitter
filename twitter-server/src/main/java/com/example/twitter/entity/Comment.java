@@ -46,4 +46,13 @@ public class Comment {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "comment")
     private List<Retweet> retweets;
+
+    public void addLikes(Like like){
+        likes.add(like);
+    }
+
+    public void addRetweet(Retweet retweet){
+        retweets.add(retweet);
+    }
+
 }
