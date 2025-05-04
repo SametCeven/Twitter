@@ -5,6 +5,7 @@ import com.example.twitter.entity.User;
 import com.example.twitter.service.TweetService;
 import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,6 +34,7 @@ public class TweetController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public Tweet post(
             @Validated @RequestBody Tweet tweet,
             @Validated @RequestBody User user){

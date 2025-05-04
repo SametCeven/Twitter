@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class UserRegister {
+public class UserRegisterRequestDto {
 
     @NotNull
     @NotEmpty

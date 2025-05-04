@@ -31,5 +31,8 @@ public class Role implements GrantedAuthority {
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<User> users = new ArrayList<>();
 
-
+    @Override
+    public String toString(){
+        return "User";
+    }
 }

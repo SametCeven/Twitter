@@ -1,11 +1,18 @@
 package com.example.twitter.service;
 
-import com.example.twitter.dto.UserRegister;
-import com.example.twitter.entity.User;
+import com.example.twitter.dto.UserRegisterRequestDto;
+import com.example.twitter.dto.UserRegisterResponseDto;
 
 public interface AuthService{
 
-    User register(UserRegister userRegister);
+    UserRegisterResponseDto registerUser(UserRegisterRequestDto userRegisterRequestDto);
+    UserRegisterResponseDto putUser(UserRegisterRequestDto userRegisterRequestDto);
+    UserRegisterResponseDto patchUser(UserRegisterRequestDto userRegisterRequestDto);
+    UserRegisterResponseDto deleteUser(UserRegisterRequestDto userRegisterRequestDto);
 
+    UserRegisterResponseDto registerAdmin(UserRegisterRequestDto userRegisterRequestDto);
+    UserRegisterResponseDto putAdmin(UserRegisterRequestDto userRegisterRequestDto);
+    UserRegisterResponseDto patchAdmin(UserRegisterRequestDto userRegisterRequestDto);
+    UserRegisterResponseDto deleteAdmin(UserRegisterRequestDto userRegisterRequestDto);
 
 }

@@ -8,6 +8,7 @@ import com.example.twitter.service.CommentService;
 import com.example.twitter.service.LikeService;
 import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,6 +46,7 @@ public class LikeController {
     }
 
     @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
     public Like put(
             @Positive @PathVariable Long id,
             @Positive @PathVariable Like like,

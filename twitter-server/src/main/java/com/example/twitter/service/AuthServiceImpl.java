@@ -1,8 +1,11 @@
 package com.example.twitter.service;
 
-import com.example.twitter.dto.UserRegister;
+import com.example.twitter.dto.UserRegisterRequestDto;
+import com.example.twitter.dto.UserRegisterResponseDto;
 import com.example.twitter.entity.Role;
 import com.example.twitter.entity.User;
+import com.example.twitter.exceptions.EmailExistsException;
+import com.example.twitter.exceptions.UsernameExistsException;
 import com.example.twitter.repository.RoleRepository;
 import com.example.twitter.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -18,8 +22,8 @@ public class AuthServiceImpl implements AuthService{
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
 
-    private final String USER_ROLE = "USER";
-    private final String ADMIN_ROLE = "ADMIN";
+    private final String ROLE_USER = "ROLE_USER";
+    private final String ROLE_ADMIN = "ROLE_ADMIN";
 
     @Autowired
     public AuthServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder){
@@ -29,21 +33,92 @@ public class AuthServiceImpl implements AuthService{
     }
 
     @Override
-    public User register(UserRegister userRegister){
-        String encodedPassword = passwordEncoder.encode(userRegister.getPassword());
-        Role userRole = roleRepository.findByAuthority(USER_ROLE).get();
+    public UserRegisterResponseDto registerUser(UserRegisterRequestDto userRegisterRequestDto){
+        Optional<User> userByUsername = userRepository.findUserByUsername(userRegisterRequestDto.getUsername());
+        if(userByUsername.isPresent()) throw new UsernameExistsException("Username exits!");
+        Optional<User> userByEmail = userRepository.findUserByEmail(userRegisterRequestDto.getEmail());
+        if(userByEmail.isPresent()) throw new EmailExistsException("Email exists");
+
+        String encodedPassword = passwordEncoder.encode(userRegisterRequestDto.getPassword());
+        Role userRole = roleRepository.findByAuthority(ROLE_USER).get();
         Set<Role> roles = new HashSet<>();
         roles.add(userRole);
 
         User user = new User();
-        user.setUsername(user.getUsername());
-        user.setEmail(user.getEmail());
+        user.setUsername(userRegisterRequestDto.getUsername());
+        user.setEmail(userRegisterRequestDto.getEmail());
         user.setPassword(encodedPassword);
         user.setAuthorities(roles);
 
-        return userRepository.save(user);
+        userRepository.save(user);
+
+        return new UserRegisterResponseDto(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getProfilePicture());
     }
 
+    @Override
+    public UserRegisterResponseDto putUser(UserRegisterRequestDto userRegisterRequestDto) {
+        return null;
+    }
+
+    @Override
+    public UserRegisterResponseDto patchUser(UserRegisterRequestDto userRegisterRequestDto) {
+        return null;
+    }
+
+    @Override
+    public UserRegisterResponseDto deleteUser(UserRegisterRequestDto userRegisterRequestDto) {
+        return null;
+    }
+
+    @Override
+    public UserRegisterResponseDto registerAdmin(UserRegisterRequestDto userRegisterRequestDto){
+        Optional<User> userByUsername = userRepository.findUserByUsername(userRegisterRequestDto.getUsername());
+        if(userByUsername.isPresent()) throw new UsernameExistsException("Username exists!");
+        Optional<User> userByEmail = userRepository.findUserByEmail(userRegisterRequestDto.getEmail());
+        if(userByEmail.isPresent()) throw new EmailExistsException("Email exists");
+
+        String encodedPassword = passwordEncoder.encode(userRegisterRequestDto.getPassword());
+        Role userRole = roleRepository.findByAuthority(ROLE_ADMIN).get();
+        Set<Role> roles = new HashSet<>();
+        roles.add(userRole);
+
+        User user = new User();
+        user.setUsername(userRegisterRequestDto.getUsername());
+        user.setEmail(userRegisterRequestDto.getEmail());
+        user.setPassword(encodedPassword);
+        user.setAuthorities(roles);
+
+        userRepository.save(user);
+
+        return new UserRegisterResponseDto(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getProfilePicture());
+    }
+
+    @Override
+    public UserRegisterResponseDto putAdmin(UserRegisterRequestDto userRegisterRequestDto) {
+        return null;
+    }
+
+    @Override
+    public UserRegisterResponseDto patchAdmin(UserRegisterRequestDto userRegisterRequestDto) {
+        return null;
+    }
+
+    @Override
+    public UserRegisterResponseDto deleteAdmin(UserRegisterRequestDto userRegisterRequestDto) {
+        return null;
+    }
 
 
 }

@@ -1,17 +1,19 @@
 package com.example.twitter.service;
 
+import com.example.twitter.dto.UserResponseDto;
 import com.example.twitter.entity.User;
-import com.example.twitter.exceptions.UserNotFoundException;
 import com.example.twitter.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService, UserDetailsService {
 
     private UserRepository userRepository;
 
@@ -21,48 +23,43 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public List<User> getALl() {
-        return userRepository.findAll();
+    public List<UserResponseDto> getALl() {
+        List<UserResponseDto> responseDtos = new ArrayList<>();
+        List<User> users = userRepository.findAll();
+        for(User user:users){
+            responseDtos.add(new UserResponseDto(
+                    user.getId(),
+                    user.getUsername(),
+                    user.getEmail(),
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getProfilePicture(),
+                    userRepository.findUsersAuthorities(user.getId())));
+        }
+        return responseDtos;
     }
 
     @Override
-    public User getById(Long id) {
-        return userRepository
+    public UserResponseDto getById(Long id) {
+        User user = userRepository
                 .findById(id)
                 .orElseThrow(()->new UsernameNotFoundException("User with " + id + " not found."));
+        return new UserResponseDto(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getProfilePicture(),
+                userRepository.findUsersAuthorities(id));
     }
 
     @Override
-    public User save(User user) {
-        return userRepository.save(user);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository
+                .findUserByUsername(username)
+                .orElseThrow(()->new UsernameNotFoundException("Username not found"));
     }
 
-    @Override
-    public User put(Long id, User user) {
-        Optional<User> userOptional = userRepository.findById(id);
-        if(userOptional.isPresent()){
-            user.setId(id);
-            return userRepository.save(user);
-        }
-        return userRepository.save(user);
-    }
 
-    @Override
-    public User patch(Long id, User user) {
-        User userOptional = userRepository
-                .findById(id)
-                .orElseThrow(()->new UserNotFoundException("User with " + id + " not found."));
-        if(user.getUsername() != null) userOptional.setUsername(user.getUsername());
-        if(user.getEmail() != null) userOptional.setEmail(user.getEmail());
-        if(user.getPassword() != null) userOptional.setPassword(user.getPassword());
-        if(user.getFirstName() != null) userOptional.setFirstName(user.getFirstName());
-        if(user.getLastName() != null) userOptional.setLastName(user.getLastName());
-        if(user.getProfilePicture() != null) userOptional.setProfilePicture(user.getProfilePicture());
-        return userRepository.save(userOptional);
-    }
-
-    @Override
-    public void delete(Long id) {
-        userRepository.deleteById(id);
-    }
 }

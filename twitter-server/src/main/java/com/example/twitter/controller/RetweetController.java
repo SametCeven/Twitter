@@ -5,6 +5,7 @@ import com.example.twitter.service.LikeService;
 import com.example.twitter.service.RetweetService;
 import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,6 +43,7 @@ public class RetweetController {
     }
 
     @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
     public Retweet put(
             @Positive @PathVariable Long id,
             @Positive @PathVariable Retweet retweet,

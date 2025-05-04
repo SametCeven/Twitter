@@ -1,13 +1,12 @@
 package com.example.twitter.controller;
 
-import com.example.twitter.dto.UserRegister;
+import com.example.twitter.dto.UserRegisterRequestDto;
+import com.example.twitter.dto.UserRegisterResponseDto;
 import com.example.twitter.entity.User;
 import com.example.twitter.service.AuthService;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -19,9 +18,21 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping
-    public User register(@Validated @RequestBody UserRegister userRegister){
-        return authService.register(userRegister);
+    @PostMapping("/register/user")
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserRegisterResponseDto registerUser(@Validated @RequestBody UserRegisterRequestDto userRegisterRequestDto){
+        return authService.registerUser(userRegisterRequestDto);
+    }
+
+    @PostMapping("/register/admin")
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserRegisterResponseDto registerAdmin(@Validated @RequestBody UserRegisterRequestDto userRegisterRequestDto){
+        return authService.registerAdmin(userRegisterRequestDto);
+    }
+
+    @PutMapping("/register/user")
+    public UserRegisterResponseDto putUser(@Validated @RequestBody UserRegisterRequestDto userRegisterRequestDto){
+
     }
 
 }

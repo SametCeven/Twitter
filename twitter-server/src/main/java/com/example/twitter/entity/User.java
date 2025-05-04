@@ -40,8 +40,6 @@ public class User implements UserDetails {
 
     @NotNull
     @NotEmpty
-    @Size(min = 10, max = 50)
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).+$")
     @Column(name = "password")
     private String password;
 
@@ -113,5 +111,10 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public String toString(){
+        return "User";
     }
 }
