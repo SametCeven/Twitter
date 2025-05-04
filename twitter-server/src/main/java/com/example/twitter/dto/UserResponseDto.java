@@ -1,6 +1,5 @@
 package com.example.twitter.dto;
 
-import com.example.twitter.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

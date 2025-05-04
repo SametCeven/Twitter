@@ -1,12 +1,18 @@
 package com.example.twitter.service;
 
+import com.example.twitter.dto.TweetRequestDto;
+import com.example.twitter.dto.TweetResponseDto;
 import com.example.twitter.entity.Tweet;
 import com.example.twitter.entity.User;
 import com.example.twitter.exceptions.TweetNotFoundException;
+import com.example.twitter.exceptions.UserNotFoundException;
 import com.example.twitter.repository.TweetRepository;
+import com.example.twitter.repository.UserRepository;
+import com.example.twitter.utils.DtoMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,50 +20,93 @@ import java.util.Optional;
 public class TweetServiceImpl implements TweetService{
 
     private TweetRepository tweetRepository;
+    private UserRepository userRepository;
+    private DtoMapping dtoMapping;
 
     @Autowired
-    public TweetServiceImpl(TweetRepository tweetRepository){
+    public TweetServiceImpl(DtoMapping dtoMapping, TweetRepository tweetRepository, UserRepository userRepository){
+        this.dtoMapping = dtoMapping;
         this.tweetRepository = tweetRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
-    public List<Tweet> getALl() {
-        return tweetRepository.findAll();
+    public TweetResponseDto save(TweetRequestDto tweetRequestDto, String username) {
+        Tweet tweet = new Tweet();
+        tweet.setTweetText(tweetRequestDto.getTweetText());
+        tweet.setCreatedDate(tweetRequestDto.getCreatedDate());
+        tweet.setPicture(tweetRequestDto.getPicture());
+
+        User user = userRepository
+                .findUserByUsername(username)
+                .orElseThrow(()->new UserNotFoundException("User not found"));
+
+        user.addTweet(tweet);
+        tweet.setUser(user);
+
+        tweetRepository.save(tweet);
+
+        return dtoMapping.MappingTweetToTweetResponseDto(tweet);
     }
 
     @Override
-    public Tweet getById(Long id) {
-        return tweetRepository
+    public List<TweetResponseDto> getByUserId(String username) {
+        User user = userRepository
+                .findUserByUsername(username)
+                .orElseThrow(()->new UserNotFoundException("User with username:" + username + " does not exist"));
+        List<Tweet> tweets = tweetRepository.getByUserId(user.getId());
+        List<TweetResponseDto> responseDtos = new ArrayList<>();
+        for(Tweet tweet:tweets){
+            responseDtos.add(dtoMapping.MappingTweetToTweetResponseDto(tweet));
+        }
+        return responseDtos;
+    }
+
+    @Override
+    public TweetResponseDto getById(Long id) {
+        Tweet tweet = tweetRepository
                 .findById(id)
                 .orElseThrow(()->new TweetNotFoundException("Tweet with " + id + " not found."));
+        return dtoMapping.MappingTweetToTweetResponseDto(tweet);
     }
 
     @Override
-    public Tweet save(Tweet tweet, User user) {
-        user.addTweet(tweet);
-        return tweetRepository.save(tweet);
-    }
-
-    @Override
-    public Tweet put(Long id, Tweet tweet, User user) {
+    public TweetResponseDto put(Long id, TweetRequestDto tweetRequestDto, String username) {
+        User user = userRepository
+                .findUserByUsername(username)
+                .orElseThrow(()->new UserNotFoundException("User not found"));
         Optional<Tweet> tweetOptional = tweetRepository.findById(id);
-        if(tweetOptional.isPresent()){
+
+        Tweet tweet = dtoMapping.MappingTweetRequestToTweet(tweetRequestDto);
+
+        if (tweetOptional.isPresent()){
             tweet.setId(id);
-            return tweetRepository.save(tweet);
+            tweet.setUser(user);
+            tweetRepository.save(tweet);
+            return dtoMapping.MappingTweetToTweetResponseDto(tweet);
         }
+
         user.addTweet(tweet);
-        return tweetRepository.save(tweet);
+        tweet.setUser(user);
+        tweetRepository.save(tweet);
+        return dtoMapping.MappingTweetToTweetResponseDto(tweet);
+
     }
 
     @Override
-    public Tweet patch(Long id, Tweet tweet) {
+    public TweetResponseDto patch(Long id, TweetRequestDto tweetRequestDto, String username) {
+        User user = userRepository
+                .findUserByUsername(username)
+                .orElseThrow(()->new UserNotFoundException("User not found"));
         Tweet tweetOptional = tweetRepository
                 .findById(id)
                 .orElseThrow(()->new TweetNotFoundException("Tweet with " + id + " not found."));
-        if(tweet.getTweetText() != null) tweetOptional.setTweetText(tweet.getTweetText());
-        if(tweet.getCreatedDate() != null) tweetOptional.setCreatedDate(tweet.getCreatedDate());
-        if(tweet.getPicture() != null) tweetOptional.setPicture(tweet.getPicture());
-        return tweetRepository.save(tweetOptional);
+
+        if(tweetRequestDto.getTweetText() != null) tweetOptional.setTweetText(tweetRequestDto.getTweetText());
+        if(tweetRequestDto.getCreatedDate() != null) tweetOptional.setCreatedDate(tweetRequestDto.getCreatedDate());
+        if(tweetRequestDto.getPicture() != null) tweetOptional.setPicture(tweetRequestDto.getPicture());
+        tweetRepository.save(tweetOptional);
+        return dtoMapping.MappingTweetToTweetResponseDto(tweetOptional);
     }
 
     @Override

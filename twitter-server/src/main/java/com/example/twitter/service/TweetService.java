@@ -1,16 +1,16 @@
 package com.example.twitter.service;
 
-import com.example.twitter.entity.Tweet;
-import com.example.twitter.entity.User;
+import com.example.twitter.dto.TweetRequestDto;
+import com.example.twitter.dto.TweetResponseDto;
 
 import java.util.List;
 
 public interface TweetService {
-    List<Tweet> getALl();
-    Tweet getById(Long id);
-    Tweet save(Tweet tweet, User user);
-    Tweet put(Long id, Tweet tweet, User user);
-    Tweet patch(Long id, Tweet tweet);
+    TweetResponseDto save(TweetRequestDto tweetRequestDto, String username);
+    List<TweetResponseDto> getByUserId(String username);
+    TweetResponseDto getById(Long id);
+    TweetResponseDto put(Long id, TweetRequestDto tweetRequestDto, String username);
+    TweetResponseDto patch(Long id, TweetRequestDto tweetRequestDto, String username);
     void delete(Long id);
 
 }

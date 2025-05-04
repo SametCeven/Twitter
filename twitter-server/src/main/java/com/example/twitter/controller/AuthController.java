@@ -30,9 +30,5 @@ public class AuthController {
         return authService.registerAdmin(userRegisterRequestDto);
     }
 
-    @PutMapping("/register/user")
-    public UserRegisterResponseDto putUser(@Validated @RequestBody UserRegisterRequestDto userRegisterRequestDto){
-
-    }
 
 }
