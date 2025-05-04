@@ -11,5 +11,7 @@ import lombok.NoArgsConstructor;
 public class CommentRequestDto {
     private String commentText;
     private byte[] picture;
+
+    @NotNull
     private Long tweetId;
 }

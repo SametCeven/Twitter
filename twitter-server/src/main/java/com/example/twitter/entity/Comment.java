@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @NoArgsConstructor
@@ -25,6 +26,9 @@ public class Comment {
     @NotEmpty
     @Column(name = "comment_text")
     private String commentText;
+
+    @Column(name = "created_date")
+    private LocalDateTime createdDate;
 
     @Column(name = "picture")
     private byte[] picture;

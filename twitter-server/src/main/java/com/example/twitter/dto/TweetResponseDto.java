@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,5 +16,8 @@ public class TweetResponseDto {
     private String tweetText;
     private LocalDateTime createdDate;
     private byte[] picture;
-    private UserResponseDto userResponseDto;
+    private Long userId;
+    private List<CommentResponseDto> commentResponseDtos;
+    private Integer likeCount;
+    private Integer retweetCount;
 }

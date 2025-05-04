@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 public class DtoMappingImpl implements DtoMapping{
 
@@ -19,7 +22,8 @@ public class DtoMappingImpl implements DtoMapping{
     private TweetRepository tweetRepository;
 
     @Autowired
-    public DtoMappingImpl(UserRepository userRepository, TweetRepository tweetRepository){
+    public DtoMappingImpl(PasswordEncoder passwordEncoder, UserRepository userRepository, TweetRepository tweetRepository){
+        this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.tweetRepository = tweetRepository;
     }
@@ -57,20 +61,23 @@ public class DtoMappingImpl implements DtoMapping{
 
     @Override
     public TweetResponseDto MappingTweetToTweetResponseDto(Tweet tweet) {
+        List<Comment> comments = tweetRepository.getCommentByTweetId(tweet.getId());
+        List<CommentResponseDto> commentResponseDto = new ArrayList<>();
+        for(Comment comment:comments){
+            commentResponseDto.add(MappingCommentToCommentResponseDto(comment));
+        }
+        Integer likeCount = tweetRepository.getLikeCount(tweet.getId());
+        Integer retweetCount = tweetRepository.getRetweetCount(tweet.getId());
+
         return new TweetResponseDto(
                 tweet.getId(),
                 tweet.getTweetText(),
                 tweet.getCreatedDate(),
                 tweet.getPicture(),
-                new UserResponseDto(
-                        tweet.getUser().getId(),
-                        tweet.getUser().getUsername(),
-                        tweet.getUser().getEmail(),
-                        tweet.getUser().getFirstName(),
-                        tweet.getUser().getLastName(),
-                        tweet.getUser().getProfilePicture(),
-                        userRepository.findUsersAuthorities(tweet.getUser().getId())
-                )
+                tweet.getUser().getId(),
+                commentResponseDto,
+                likeCount,
+                retweetCount
         );
     }
 
@@ -85,14 +92,13 @@ public class DtoMappingImpl implements DtoMapping{
 
     @Override
     public CommentResponseDto MappingCommentToCommentResponseDto(Comment comment) {
-        TweetResponseDto tweetResponseDto = MappingTweetToTweetResponseDto(comment.getTweet());
-        UserResponseDto userResponseDto = MappingUserToUserResponseDto(comment.getUser());
         return new CommentResponseDto(
                 comment.getId(),
                 comment.getCommentText(),
+                comment.getCreatedDate(),
                 comment.getPicture(),
-                tweetResponseDto,
-                userResponseDto
+                comment.getTweet().getId(),
+                comment.getUser().getId()
         );
     }
 

@@ -4,13 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 public class CommentResponseDto {
     private Long id;
     private String commentText;
+    private LocalDateTime createdDate;
     private byte[] picture;
-    private TweetResponseDto tweetResponseDto;
-    private UserResponseDto userResponseDto;
+    private Long tweetId;
+    private Long userId;
 }

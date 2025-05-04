@@ -18,6 +18,6 @@ public class UserResponseDto {
     private String firstName;
     private String lastName;
     private byte[] profilePicture;
-    private Set<String > authorities = new HashSet<>();
+    private Set<String> authorities = new HashSet<>();
 
 }

@@ -2,12 +2,10 @@ package com.example.twitter.controller;
 
 import com.example.twitter.dto.CommentRequestDto;
 import com.example.twitter.dto.CommentResponseDto;
-import com.example.twitter.dto.TweetRequestDto;
 import com.example.twitter.entity.Comment;
 import com.example.twitter.entity.Tweet;
 import com.example.twitter.entity.User;
 import com.example.twitter.service.CommentService;
-import com.example.twitter.service.UserService;
 import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
