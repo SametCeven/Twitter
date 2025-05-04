@@ -27,16 +27,14 @@ public class Comment {
     private String commentText;
 
     @Column(name = "picture")
-    private String picture;
+    private byte[] picture;
 
     @NotNull
-    @NotEmpty
     @ManyToOne(cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH})
     @JoinColumn(name = "tweet_id")
     private Tweet tweet;
 
     @NotNull
-    @NotEmpty
     @ManyToOne(cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH})
     @JoinColumn(name = "user_id")
     private User user;

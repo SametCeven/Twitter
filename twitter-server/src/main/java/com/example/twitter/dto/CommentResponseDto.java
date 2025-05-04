@@ -7,10 +7,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class UserRegisterResponseDto {
-
+public class CommentResponseDto {
     private Long id;
-    private String username;
-    private String email;
-
+    private String commentText;
+    private byte[] picture;
+    private TweetResponseDto tweetResponseDto;
+    private UserResponseDto userResponseDto;
 }

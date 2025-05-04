@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -47,14 +48,17 @@ public class Tweet {
     private List<Retweet> retweets;
 
     public void addComment(Comment comment){
+        if(comments == null) comments = new ArrayList<>();
         comments.add(comment);
     }
 
     public void addLike(Like like){
+        if(likes == null) likes = new ArrayList<>();
         likes.add(like);
     }
 
     public void addRetweet(Retweet retweet){
+        if(retweets == null) retweets = new ArrayList<>();
         retweets.add(retweet);
     }
 

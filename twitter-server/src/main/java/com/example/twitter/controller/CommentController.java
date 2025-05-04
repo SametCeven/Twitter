@@ -1,5 +1,8 @@
 package com.example.twitter.controller;
 
+import com.example.twitter.dto.CommentRequestDto;
+import com.example.twitter.dto.CommentResponseDto;
+import com.example.twitter.dto.TweetRequestDto;
 import com.example.twitter.entity.Comment;
 import com.example.twitter.entity.Tweet;
 import com.example.twitter.entity.User;
@@ -8,6 +11,7 @@ import com.example.twitter.service.UserService;
 import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +28,15 @@ public class CommentController {
         this.commentService = commentService;
     }
 
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public CommentResponseDto post(
+            @Validated @RequestBody CommentRequestDto commentRequestDto,
+            Authentication authentication){
+        String username = authentication.getName();
+        return commentService.save(commentRequestDto, username);
+    }
+
     @GetMapping
     public List<Comment> getAll(){
         return commentService.getALl();
@@ -35,14 +48,7 @@ public class CommentController {
         return commentService.getById(id);
     }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Comment post(
-            @Validated @RequestBody Comment comment,
-            @Validated @RequestBody Tweet tweet,
-            @Validated @RequestBody User user){
-        return commentService.save(comment, tweet, user);
-    }
+
 
     @PutMapping("/{id}")
     public Comment put(

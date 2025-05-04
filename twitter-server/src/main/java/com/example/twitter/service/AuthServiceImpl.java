@@ -8,6 +8,7 @@ import com.example.twitter.exceptions.EmailExistsException;
 import com.example.twitter.exceptions.UsernameExistsException;
 import com.example.twitter.repository.RoleRepository;
 import com.example.twitter.repository.UserRepository;
+import com.example.twitter.utils.DtoMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,18 +19,18 @@ import java.util.Set;
 
 @Service
 public class AuthServiceImpl implements AuthService{
+    private DtoMapping dtoMapping;
     private UserRepository userRepository;
     private RoleRepository roleRepository;
-    private PasswordEncoder passwordEncoder;
 
     private final String ROLE_USER = "ROLE_USER";
     private final String ROLE_ADMIN = "ROLE_ADMIN";
 
     @Autowired
-    public AuthServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder){
+    public AuthServiceImpl(DtoMapping dtoMapping, UserRepository userRepository, RoleRepository roleRepository){
+        this.dtoMapping = dtoMapping;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -39,26 +40,16 @@ public class AuthServiceImpl implements AuthService{
         Optional<User> userByEmail = userRepository.findUserByEmail(userRegisterRequestDto.getEmail());
         if(userByEmail.isPresent()) throw new EmailExistsException("Email exists");
 
-        String encodedPassword = passwordEncoder.encode(userRegisterRequestDto.getPassword());
         Role userRole = roleRepository.findByAuthority(ROLE_USER).get();
         Set<Role> roles = new HashSet<>();
         roles.add(userRole);
 
-        User user = new User();
-        user.setUsername(userRegisterRequestDto.getUsername());
-        user.setEmail(userRegisterRequestDto.getEmail());
-        user.setPassword(encodedPassword);
+        User user = dtoMapping.MappingUserRegisterRequestToUser(userRegisterRequestDto);
         user.setAuthorities(roles);
 
         userRepository.save(user);
 
-        return new UserRegisterResponseDto(
-                user.getId(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getProfilePicture());
+        return dtoMapping.MappingUserToUserRegisterResponseDto(user);
     }
 
     @Override
@@ -83,26 +74,16 @@ public class AuthServiceImpl implements AuthService{
         Optional<User> userByEmail = userRepository.findUserByEmail(userRegisterRequestDto.getEmail());
         if(userByEmail.isPresent()) throw new EmailExistsException("Email exists");
 
-        String encodedPassword = passwordEncoder.encode(userRegisterRequestDto.getPassword());
         Role userRole = roleRepository.findByAuthority(ROLE_ADMIN).get();
         Set<Role> roles = new HashSet<>();
         roles.add(userRole);
 
-        User user = new User();
-        user.setUsername(userRegisterRequestDto.getUsername());
-        user.setEmail(userRegisterRequestDto.getEmail());
-        user.setPassword(encodedPassword);
+        User user = dtoMapping.MappingUserRegisterRequestToUser(userRegisterRequestDto);
         user.setAuthorities(roles);
 
         userRepository.save(user);
 
-        return new UserRegisterResponseDto(
-                user.getId(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getProfilePicture());
+        return dtoMapping.MappingUserToUserRegisterResponseDto(user);
     }
 
     @Override
