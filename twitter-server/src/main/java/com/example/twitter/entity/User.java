@@ -8,10 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -72,19 +69,27 @@ public class User implements UserDetails {
     private Set<Role> authorities = new HashSet<>();
 
     public void addTweet(Tweet tweet){
+        if(tweets == null) tweets = new ArrayList<>();
         tweets.add(tweet);
+        tweet.setUser(this);
     }
 
     public void addComment(Comment comment){
+        if(comments == null) comments = new ArrayList<>();
         comments.add(comment);
+        comment.setUser(this);
     }
 
     public void addLikes(Like like){
+        if(likes == null) likes = new ArrayList<>();
         likes.add(like);
+        like.setUser(this);
     }
 
     public void addRetweet(Retweet retweet){
+        if(retweets == null) retweets = new ArrayList<>();
         retweets.add(retweet);
+        retweet.setUser(this);
     }
 
 

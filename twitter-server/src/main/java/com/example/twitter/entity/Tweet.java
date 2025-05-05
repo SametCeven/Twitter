@@ -50,16 +50,19 @@ public class Tweet {
     public void addComment(Comment comment){
         if(comments == null) comments = new ArrayList<>();
         comments.add(comment);
+        comment.setTweet(this);
     }
 
     public void addLike(Like like){
         if(likes == null) likes = new ArrayList<>();
         likes.add(like);
+        like.setTweet(this);
     }
 
     public void addRetweet(Retweet retweet){
         if(retweets == null) retweets = new ArrayList<>();
         retweets.add(retweet);
+        retweet.setTweet(this);
     }
 
 }

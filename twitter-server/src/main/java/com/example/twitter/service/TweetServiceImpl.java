@@ -98,19 +98,22 @@ public class TweetServiceImpl implements TweetService{
         User user = userRepository
                 .findUserByUsername(username)
                 .orElseThrow(()->new UserNotFoundException("User not found"));
-        Tweet tweetOptional = tweetRepository
+        Tweet tweet = tweetRepository
                 .findById(id)
                 .orElseThrow(()->new TweetNotFoundException("Tweet with " + id + " not found."));
 
-        if(tweetRequestDto.getTweetText() != null) tweetOptional.setTweetText(tweetRequestDto.getTweetText());
-        if(tweetRequestDto.getCreatedDate() != null) tweetOptional.setCreatedDate(tweetRequestDto.getCreatedDate());
-        if(tweetRequestDto.getPicture() != null) tweetOptional.setPicture(tweetRequestDto.getPicture());
-        tweetRepository.save(tweetOptional);
-        return dtoMapping.MappingTweetToTweetResponseDto(tweetOptional);
+        if(tweetRequestDto.getTweetText() != null) tweet.setTweetText(tweetRequestDto.getTweetText());
+        if(tweetRequestDto.getCreatedDate() != null) tweet.setCreatedDate(tweetRequestDto.getCreatedDate());
+        if(tweetRequestDto.getPicture() != null) tweet.setPicture(tweetRequestDto.getPicture());
+        tweetRepository.save(tweet);
+        return dtoMapping.MappingTweetToTweetResponseDto(tweet);
     }
 
     @Override
     public void delete(Long id) {
+        Tweet tweet = tweetRepository
+                .findById(id)
+                .orElseThrow(()-> new TweetNotFoundException("Tweet with " + id + " not found."));
         tweetRepository.deleteById(id);
     }
 }

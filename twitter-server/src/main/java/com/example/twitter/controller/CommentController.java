@@ -35,33 +35,22 @@ public class CommentController {
         return commentService.save(commentRequestDto, username);
     }
 
-    @GetMapping
-    public List<Comment> getAll(){
-        return commentService.getALl();
-    }
-
-    @GetMapping("/{id}")
-    public Comment getById(
-            @Positive @PathVariable Long id){
-        return commentService.getById(id);
-    }
-
-
-
     @PutMapping("/{id}")
-    public Comment put(
+    public CommentResponseDto put(
             @Positive @PathVariable Long id,
-            @Validated @RequestBody Comment comment,
-            @Validated @RequestBody Tweet tweet,
-            @Validated @RequestBody User user){
-        return commentService.put(id, comment, tweet, user);
+            @Validated @RequestBody CommentRequestDto commentRequestDto,
+            Authentication authentication){
+        String username = authentication.getName();
+        return commentService.put(id, commentRequestDto,username);
     }
 
     @PatchMapping("/{id}")
-    public Comment patch(
+    public CommentResponseDto patch(
             @Positive @PathVariable Long id,
-            @Validated @RequestBody Comment comment){
-        return commentService.patch(id,comment);
+            @Validated @RequestBody CommentRequestDto commentRequestDto,
+            Authentication authentication){
+        String username = authentication.getName();
+        return commentService.patch(id, commentRequestDto, username);
     }
 
     @DeleteMapping("/{id}")
