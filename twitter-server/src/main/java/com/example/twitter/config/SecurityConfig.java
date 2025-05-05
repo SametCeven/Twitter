@@ -35,8 +35,6 @@ public class SecurityConfig {
                     auth.requestMatchers("/auth/register/user").permitAll();
                     auth.requestMatchers("/auth/login/**").permitAll();
                     auth.requestMatchers("/auth/register/admin").hasRole("ADMIN");
-                    auth.requestMatchers("/user").hasRole("ADMIN");
-                    auth.requestMatchers("/user/**").hasRole("ADMIN");
                         auth.anyRequest().authenticated();
                 })
                 .formLogin(Customizer.withDefaults())

@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+
+.input-label{
+    @apply flex justify-between
+}
+.input{
+    @apply border
+}
