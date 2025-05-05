@@ -1,66 +1,57 @@
 package com.example.twitter.service;
 
-import com.example.twitter.entity.Comment;
+import com.example.twitter.dto.LikeRequestDto;
+import com.example.twitter.dto.LikeResponseDto;
 import com.example.twitter.entity.Like;
-import com.example.twitter.entity.Tweet;
 import com.example.twitter.entity.User;
-import com.example.twitter.exceptions.LikeNotFoundException;
+import com.example.twitter.exceptions.LikeExistsException;
+import com.example.twitter.exceptions.UserNotFoundException;
 import com.example.twitter.repository.LikeRepository;
+import com.example.twitter.repository.UserRepository;
+import com.example.twitter.utils.DtoMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class LikeServiceImpl implements LikeService{
+
+    private DtoMapping dtoMapping;
+    private UserRepository userRepository;
     private LikeRepository likeRepository;
 
     @Autowired
-    public LikeServiceImpl(LikeRepository likeRepository){
+    public LikeServiceImpl(DtoMapping dtoMapping, UserRepository userRepository, LikeRepository likeRepository){
+        this.dtoMapping = dtoMapping;
+        this.userRepository = userRepository;
         this.likeRepository = likeRepository;
     }
 
-    @Override
-    public List<Like> getALl() {
-        return likeRepository.findAll();
-    }
 
     @Override
-    public Like getById(Long id) {
-        return likeRepository
-                .findById(id)
-                .orElseThrow(()->new LikeNotFoundException("Like with " + id + " not found."));
-    }
-
-    @Override
-    public Like save(Like like, Comment comment, Tweet tweet, User user) {
-        if(tweet != null) tweet.addLike(like);
-        if(comment != null) comment.addLikes(like);
-        user.addLikes(like);
-        return likeRepository.save(like);
-    }
-
-    @Override
-    public Like put(Long id, Like like, Comment comment, Tweet tweet, User user) {
-        Optional<Like> likeOptional = likeRepository.findById(id);
-        if(likeOptional.isPresent()){
-            like.setId(id);
-            return likeRepository.save(like);
+    public LikeResponseDto save(LikeRequestDto likeRequestDto, String username) {
+        if(likeRepository.getLikeOfTweetByTweetIdAndUsername(likeRequestDto.getTweetId(), username) != null){
+            throw new LikeExistsException("Already liked.");
         }
-        if(tweet != null) tweet.addLike(like);
-        if(comment != null) comment.addLikes(like);
-        user.addLikes(like);
-        return likeRepository.save(like);
+        User user = userRepository
+                .findUserByUsername(username)
+                .orElseThrow(()-> new UserNotFoundException("User with username: " + username + " not found."));
+        Like like = dtoMapping.MappingLikeRequestToLike(likeRequestDto);
+        like.setUser(user);
+        likeRepository.save(like);
+        return dtoMapping.MappingLikeToLikeResponseDto(like);
     }
 
     @Override
-    public Like patch(Long id, Like like) {
-        return like;
+    public LikeResponseDto remove(LikeRequestDto likeRequestDto, String username) {
+        User user = userRepository
+                .findUserByUsername(username)
+                .orElseThrow(()-> new UserNotFoundException("User with username: " + username + " not found."));
+        Like like = likeRepository.getLikeOfTweetByTweetIdAndUsername(likeRequestDto.getTweetId(), username);
+        like.setUser(user);
+        likeRepository.deleteById(like.getId());
+        return dtoMapping.MappingLikeToLikeResponseDto(like);
     }
 
-    @Override
-    public void delete(Long id) {
-        likeRepository.deleteById(id);
-    }
+
 }

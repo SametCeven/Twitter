@@ -2,6 +2,7 @@ package com.example.twitter.utils;
 
 import com.example.twitter.dto.*;
 import com.example.twitter.entity.Comment;
+import com.example.twitter.entity.Like;
 import com.example.twitter.entity.Tweet;
 import com.example.twitter.entity.User;
 
@@ -13,6 +14,8 @@ public interface DtoMapping {
     Tweet MappingTweetRequestToTweet(TweetRequestDto tweetRequestDto);
     CommentResponseDto MappingCommentToCommentResponseDto(Comment comment);
     Comment MappingCommentRequestToComment(CommentRequestDto commentRequestDto);
+    LikeResponseDto MappingLikeToLikeResponseDto(Like like);
+    Like MappingLikeRequestToLike(LikeRequestDto likeRequestDto);
 
 
 }

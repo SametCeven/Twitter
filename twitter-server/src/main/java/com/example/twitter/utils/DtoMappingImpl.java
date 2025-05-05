@@ -2,9 +2,13 @@ package com.example.twitter.utils;
 
 import com.example.twitter.dto.*;
 import com.example.twitter.entity.Comment;
+import com.example.twitter.entity.Like;
 import com.example.twitter.entity.Tweet;
 import com.example.twitter.entity.User;
+import com.example.twitter.exceptions.CommentNotFoundException;
 import com.example.twitter.exceptions.TweetNotFoundException;
+import com.example.twitter.exceptions.UserNotFoundException;
+import com.example.twitter.repository.CommentRepository;
 import com.example.twitter.repository.TweetRepository;
 import com.example.twitter.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +24,14 @@ public class DtoMappingImpl implements DtoMapping{
     private PasswordEncoder passwordEncoder;
     private UserRepository userRepository;
     private TweetRepository tweetRepository;
+    private CommentRepository commentRepository;
 
     @Autowired
-    public DtoMappingImpl(PasswordEncoder passwordEncoder, UserRepository userRepository, TweetRepository tweetRepository){
+    public DtoMappingImpl(PasswordEncoder passwordEncoder, UserRepository userRepository, TweetRepository tweetRepository, CommentRepository commentRepository){
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.tweetRepository = tweetRepository;
+        this.commentRepository = commentRepository;
     }
 
     @Override
@@ -112,6 +118,25 @@ public class DtoMappingImpl implements DtoMapping{
                 .orElseThrow(()-> new TweetNotFoundException("Tweet with id: " + commentRequestDto.getTweetId() + " not found."));
         comment.setTweet(tweet);
         return comment;
+    }
+
+    @Override
+    public LikeResponseDto MappingLikeToLikeResponseDto(Like like) {
+        return new LikeResponseDto(
+                like.getId(),
+                like.getUser().getId(),
+                like.getTweet().getId()
+        );
+    }
+
+    @Override
+    public Like MappingLikeRequestToLike(LikeRequestDto likeRequestDto) {
+        Like like = new Like();
+            Tweet tweet = tweetRepository
+                    .findById(likeRequestDto.getTweetId())
+                    .orElseThrow(()-> new TweetNotFoundException("Tweet with id: " + likeRequestDto.getTweetId() + " not found."));
+            like.setTweet(tweet);
+        return  like;
     }
 
 
