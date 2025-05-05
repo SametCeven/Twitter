@@ -9,10 +9,12 @@ public interface AuthService{
     UserRegisterResponseDto putUser(UserRegisterRequestDto userRegisterRequestDto);
     UserRegisterResponseDto patchUser(UserRegisterRequestDto userRegisterRequestDto);
     UserRegisterResponseDto deleteUser(UserRegisterRequestDto userRegisterRequestDto);
+    UserRegisterResponseDto loginUser(UserRegisterRequestDto userRegisterRequestDto);
 
     UserRegisterResponseDto registerAdmin(UserRegisterRequestDto userRegisterRequestDto);
     UserRegisterResponseDto putAdmin(UserRegisterRequestDto userRegisterRequestDto);
     UserRegisterResponseDto patchAdmin(UserRegisterRequestDto userRegisterRequestDto);
     UserRegisterResponseDto deleteAdmin(UserRegisterRequestDto userRegisterRequestDto);
+    UserRegisterResponseDto loginAdmin(UserRegisterRequestDto userRegisterRequestDto);
 
 }

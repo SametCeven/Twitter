@@ -26,4 +26,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
             nativeQuery = true)
     Set<String> findUsersAuthorities(Long id);
 
+
+
+
 }
