@@ -6,15 +6,15 @@ import com.example.twitter.dto.UserRegisterResponseDto;
 public interface AuthService{
 
     UserRegisterResponseDto registerUser(UserRegisterRequestDto userRegisterRequestDto);
-    UserRegisterResponseDto putUser(UserRegisterRequestDto userRegisterRequestDto);
-    UserRegisterResponseDto patchUser(UserRegisterRequestDto userRegisterRequestDto);
-    UserRegisterResponseDto deleteUser(UserRegisterRequestDto userRegisterRequestDto);
+    UserRegisterResponseDto putUser(Long id, UserRegisterRequestDto userRegisterRequestDto);
+    UserRegisterResponseDto patchUser(Long id, UserRegisterRequestDto userRegisterRequestDto);
+    void deleteUser(Long id);
     UserRegisterResponseDto loginUser(UserRegisterRequestDto userRegisterRequestDto);
 
     UserRegisterResponseDto registerAdmin(UserRegisterRequestDto userRegisterRequestDto);
-    UserRegisterResponseDto putAdmin(UserRegisterRequestDto userRegisterRequestDto);
-    UserRegisterResponseDto patchAdmin(UserRegisterRequestDto userRegisterRequestDto);
-    UserRegisterResponseDto deleteAdmin(UserRegisterRequestDto userRegisterRequestDto);
+    UserRegisterResponseDto putAdmin(Long id, UserRegisterRequestDto userRegisterRequestDto);
+    UserRegisterResponseDto patchAdmin(Long id, UserRegisterRequestDto userRegisterRequestDto);
+    void deleteAdmin(Long id);
     UserRegisterResponseDto loginAdmin(UserRegisterRequestDto userRegisterRequestDto);
 
 }

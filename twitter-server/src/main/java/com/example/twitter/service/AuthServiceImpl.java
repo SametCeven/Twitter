@@ -28,16 +28,23 @@ public class AuthServiceImpl implements AuthService{
     private UserRepository userRepository;
     private RoleRepository roleRepository;
     private AuthenticationManager authenticationManager;
+    private PasswordEncoder passwordEncoder;
 
     private final String ROLE_USER = "ROLE_USER";
     private final String ROLE_ADMIN = "ROLE_ADMIN";
 
     @Autowired
-    public AuthServiceImpl(DtoMapping dtoMapping, UserRepository userRepository, RoleRepository roleRepository, AuthenticationManager authenticationManager){
+    public AuthServiceImpl(
+            DtoMapping dtoMapping,
+            UserRepository userRepository,
+            RoleRepository roleRepository,
+            AuthenticationManager authenticationManager,
+            PasswordEncoder passwordEncoder){
         this.dtoMapping = dtoMapping;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.authenticationManager = authenticationManager;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -60,18 +67,44 @@ public class AuthServiceImpl implements AuthService{
     }
 
     @Override
-    public UserRegisterResponseDto putUser(UserRegisterRequestDto userRegisterRequestDto) {
-        return null;
+    public UserRegisterResponseDto putUser(Long id, UserRegisterRequestDto userRegisterRequestDto) {
+        Optional<User> optionalUser = userRepository.findUserByUsername(userRegisterRequestDto.getUsername());
+        User user = dtoMapping.MappingUserRegisterRequestToUser(userRegisterRequestDto);
+        Role userRole = roleRepository.findByAuthority(ROLE_USER).get();
+        Set<Role> roles = new HashSet<>();
+        roles.add(userRole);
+        user.setAuthorities(roles);
+        if(optionalUser.isPresent()){
+            user.setId(id);
+            userRepository.save(user);
+            return dtoMapping.MappingUserToUserRegisterResponseDto(user);
+        }
+        userRepository.save(user);
+        return dtoMapping.MappingUserToUserRegisterResponseDto(user);
     }
 
     @Override
-    public UserRegisterResponseDto patchUser(UserRegisterRequestDto userRegisterRequestDto) {
-        return null;
+    public UserRegisterResponseDto patchUser(Long id, UserRegisterRequestDto userRegisterRequestDto) {
+        User user = userRepository
+                .findById(id)
+                .orElseThrow(()-> new UserNotFoundException("User with id: " + id + " not found."));
+
+        if(userRegisterRequestDto.getUsername() != null) user.setUsername(userRegisterRequestDto.getUsername());
+        if(userRegisterRequestDto.getEmail() != null) user.setEmail(userRegisterRequestDto.getEmail());
+        if(userRegisterRequestDto.getPassword() != null) {
+            String encodedPassword = passwordEncoder.encode(userRegisterRequestDto.getPassword());
+            user.setPassword(encodedPassword);
+        }
+        userRepository.save(user);
+        return dtoMapping.MappingUserToUserRegisterResponseDto(user);
     }
 
     @Override
-    public UserRegisterResponseDto deleteUser(UserRegisterRequestDto userRegisterRequestDto) {
-        return null;
+    public void deleteUser(Long id) {
+        userRepository
+                .findById(id)
+                .orElseThrow(()-> new UserNotFoundException("User with id: " + id + " not found."));
+        userRepository.deleteById(id);
     }
 
     @Override
@@ -110,18 +143,44 @@ public class AuthServiceImpl implements AuthService{
     }
 
     @Override
-    public UserRegisterResponseDto putAdmin(UserRegisterRequestDto userRegisterRequestDto) {
-        return null;
+    public UserRegisterResponseDto putAdmin(Long id, UserRegisterRequestDto userRegisterRequestDto) {
+        Optional<User> optionalUser = userRepository.findUserByUsername(userRegisterRequestDto.getUsername());
+        User user = dtoMapping.MappingUserRegisterRequestToUser(userRegisterRequestDto);
+        Role userRole = roleRepository.findByAuthority(ROLE_ADMIN).get();
+        Set<Role> roles = new HashSet<>();
+        roles.add(userRole);
+        user.setAuthorities(roles);
+        if(optionalUser.isPresent()){
+            user.setId(id);
+            userRepository.save(user);
+            return dtoMapping.MappingUserToUserRegisterResponseDto(user);
+        }
+        userRepository.save(user);
+        return dtoMapping.MappingUserToUserRegisterResponseDto(user);
     }
 
     @Override
-    public UserRegisterResponseDto patchAdmin(UserRegisterRequestDto userRegisterRequestDto) {
-        return null;
+    public UserRegisterResponseDto patchAdmin(Long id, UserRegisterRequestDto userRegisterRequestDto) {
+        User user = userRepository
+                .findById(id)
+                .orElseThrow(()-> new UserNotFoundException("User with id: " + id + " not found."));
+
+        if(userRegisterRequestDto.getUsername() != null) user.setUsername(userRegisterRequestDto.getUsername());
+        if(userRegisterRequestDto.getEmail() != null) user.setEmail(userRegisterRequestDto.getEmail());
+        if(userRegisterRequestDto.getPassword() != null) {
+            String encodedPassword = passwordEncoder.encode(userRegisterRequestDto.getPassword());
+            user.setPassword(encodedPassword);
+        }
+        userRepository.save(user);
+        return dtoMapping.MappingUserToUserRegisterResponseDto(user);
     }
 
     @Override
-    public UserRegisterResponseDto deleteAdmin(UserRegisterRequestDto userRegisterRequestDto) {
-        return null;
+    public void deleteAdmin(Long id) {
+        userRepository
+                .findById(id)
+                .orElseThrow(()-> new UserNotFoundException("User with id: " + id + " not found."));
+        userRepository.deleteById(id);
     }
 
     @Override
