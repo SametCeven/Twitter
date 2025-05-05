@@ -1,17 +1,9 @@
 package com.example.twitter.service;
 
-import com.example.twitter.entity.Comment;
-import com.example.twitter.entity.Retweet;
-import com.example.twitter.entity.Tweet;
-import com.example.twitter.entity.User;
-
-import java.util.List;
+import com.example.twitter.dto.RetweetRequestDto;
+import com.example.twitter.dto.RetweetResponseDto;
 
 public interface RetweetService {
-    List<Retweet> getALl();
-    Retweet getById(Long id);
-    Retweet save(Retweet retweet, Comment comment, Tweet tweet, User user);
-    Retweet put(Long id, Retweet retweet, Comment comment, Tweet tweet, User user);
-    Retweet patch(Long id, Retweet retweet);
+    RetweetResponseDto save(RetweetRequestDto retweetRequestDto, String username);
     void delete(Long id);
 }

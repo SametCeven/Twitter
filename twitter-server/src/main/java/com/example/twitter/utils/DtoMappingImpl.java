@@ -1,10 +1,7 @@
 package com.example.twitter.utils;
 
 import com.example.twitter.dto.*;
-import com.example.twitter.entity.Comment;
-import com.example.twitter.entity.Like;
-import com.example.twitter.entity.Tweet;
-import com.example.twitter.entity.User;
+import com.example.twitter.entity.*;
 import com.example.twitter.exceptions.CommentNotFoundException;
 import com.example.twitter.exceptions.TweetNotFoundException;
 import com.example.twitter.exceptions.UserNotFoundException;
@@ -132,11 +129,30 @@ public class DtoMappingImpl implements DtoMapping{
     @Override
     public Like MappingLikeRequestToLike(LikeRequestDto likeRequestDto) {
         Like like = new Like();
-            Tweet tweet = tweetRepository
-                    .findById(likeRequestDto.getTweetId())
-                    .orElseThrow(()-> new TweetNotFoundException("Tweet with id: " + likeRequestDto.getTweetId() + " not found."));
-            like.setTweet(tweet);
+        Tweet tweet = tweetRepository
+                .findById(likeRequestDto.getTweetId())
+                .orElseThrow(()-> new TweetNotFoundException("Tweet with id: " + likeRequestDto.getTweetId() + " not found."));
+        like.setTweet(tweet);
         return  like;
+    }
+
+    @Override
+    public RetweetResponseDto MappingRetweetToRetweetResponseDto(Retweet retweet) {
+        return new RetweetResponseDto(
+                retweet.getId(),
+                retweet.getUser().getId(),
+                retweet.getTweet().getId()
+        );
+    }
+
+    @Override
+    public Retweet MappingRetweetRequestToRetweet(RetweetRequestDto retweetRequestDto) {
+        Retweet retweet = new Retweet();
+        Tweet tweet = tweetRepository
+                .findById(retweetRequestDto.getTweetId())
+                .orElseThrow(()-> new TweetNotFoundException("Tweet with id: " + retweetRequestDto.getTweetId() + " not found."));
+        retweet.setTweet(tweet);
+        return retweet;
     }
 
 

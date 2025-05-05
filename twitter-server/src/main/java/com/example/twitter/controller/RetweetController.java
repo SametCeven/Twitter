@@ -1,15 +1,13 @@
 package com.example.twitter.controller;
 
-import com.example.twitter.entity.*;
-import com.example.twitter.service.LikeService;
+import com.example.twitter.dto.RetweetRequestDto;
+import com.example.twitter.dto.RetweetResponseDto;
 import com.example.twitter.service.RetweetService;
-import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/retweet")
@@ -22,47 +20,19 @@ public class RetweetController {
         this.retweetService = retweetService;
     }
 
-    @GetMapping
-    public List<Retweet> getAll(){
-        return retweetService.getALl();
-    }
-
-    @GetMapping("/{id}")
-    public Retweet getById(
-            @Positive @PathVariable Long id){
-        return retweetService.getById(id);
-    }
-
     @PostMapping
-    public Retweet post(
-            @Validated @RequestBody Retweet retweet,
-            @Validated @RequestBody Comment comment,
-            @Validated @RequestBody Tweet tweet,
-            @Validated @RequestBody User user){
-        return retweetService.save(retweet, comment, tweet, user);
-    }
-
-    @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.CREATED)
-    public Retweet put(
-            @Positive @PathVariable Long id,
-            @Positive @PathVariable Retweet retweet,
-            @Validated @RequestBody Comment comment,
-            @Validated @RequestBody Tweet tweet,
-            @Validated @RequestBody User user){
-        return retweetService.put(id, retweet, comment, tweet, user);
-    }
-
-    @PatchMapping("/{id}")
-    public Retweet patch(
-            @Positive @PathVariable Long id,
-            @Validated @RequestBody Retweet retweet){
-        return retweetService.patch(id,retweet);
+    public RetweetResponseDto post(
+            @RequestBody RetweetRequestDto retweetRequestDto,
+            Authentication authentication){
+        String username = authentication.getName();
+        return retweetService.save(retweetRequestDto, username);
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(
-            @Positive @PathVariable Long id){
+            @PathVariable Long id){
         retweetService.delete(id);
     }
 }

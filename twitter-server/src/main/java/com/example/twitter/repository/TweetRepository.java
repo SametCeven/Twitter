@@ -11,7 +11,7 @@ import java.util.List;
 public interface TweetRepository extends JpaRepository<Tweet,Long> {
 
     @Query(value =
-            "SELECT t.user_id,t.id, t.tweet_text, t.created_date, t.picture\n" +
+            "SELECT t.*\n" +
             "FROM twit.users AS u\n" +
             "INNER JOIN twit.tweets AS t\n" +
             "ON u.id = t.user_id\t\n" +
@@ -21,7 +21,7 @@ public interface TweetRepository extends JpaRepository<Tweet,Long> {
 
 
     @Query(value =
-            "SELECT c.id, c.comment_text, c.created_date, c.tweet_id, c.user_id, c.picture\n" +
+            "SELECT c.*\n" +
             "FROM twit.tweets AS t\n" +
             "INNER JOIN twit.comments AS c\n" +
             "ON t.id = c.tweet_id\n" +
