@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface TweetService {
     TweetResponseDto save(TweetRequestDto tweetRequestDto, String username);
+    List<TweetResponseDto> getAll();
     List<TweetResponseDto> getByUserId(String username);
     TweetResponseDto getById(Long id);
     TweetResponseDto put(Long id, TweetRequestDto tweetRequestDto, String username);

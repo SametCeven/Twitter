@@ -36,7 +36,7 @@ public class RetweetServiceImpl implements RetweetService{
             throw new RetweetExistsException("Already retweeted.");
         }
         User user = userRepository
-                .findUserByUsername(username)
+                .findUserByEmail(username)
                 .orElseThrow(()-> new UserNotFoundException("User with username: " + username + " not found."));
         Retweet retweet = dtoMapping.MappingRetweetTweetRequestToRetweet(retweetTweetRequestDto);
         retweet.setUser(user);
@@ -58,7 +58,7 @@ public class RetweetServiceImpl implements RetweetService{
             throw new RetweetExistsException("Already retweeted.");
         }
         User user = userRepository
-                .findUserByUsername(username)
+                .findUserByEmail(username)
                 .orElseThrow(()-> new UserNotFoundException("User with username: " + username + " not found."));
         Retweet retweet = dtoMapping.MappingRetweetCommentRequestToRetweet(retweetCommentRequestDto);
         retweet.setUser(user);

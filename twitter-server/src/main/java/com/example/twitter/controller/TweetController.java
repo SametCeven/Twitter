@@ -2,8 +2,6 @@ package com.example.twitter.controller;
 
 import com.example.twitter.dto.TweetRequestDto;
 import com.example.twitter.dto.TweetResponseDto;
-import com.example.twitter.entity.Tweet;
-import com.example.twitter.entity.User;
 import com.example.twitter.service.TweetService;
 import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +31,12 @@ public class TweetController {
         String username = authentication.getName();
         return tweetService.save(tweetRequestDto,username);
     }
+
+    @GetMapping("/getAll")
+    public List<TweetResponseDto> getAll(){
+        return tweetService.getAll();
+    }
+
 
     @GetMapping("/findByUserId")
     public List<TweetResponseDto> getByUserId(

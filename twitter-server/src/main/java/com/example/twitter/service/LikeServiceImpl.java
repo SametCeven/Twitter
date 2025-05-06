@@ -36,7 +36,7 @@ public class LikeServiceImpl implements LikeService{
             throw new LikeExistsException("Already liked.");
         }
         User user = userRepository
-                .findUserByUsername(username)
+                .findUserByEmail(username)
                 .orElseThrow(()-> new UserNotFoundException("User with username: " + username + " not found."));
         Like like = dtoMapping.MappingLikeTweetRequestToLike(likeTweetRequestDto);
         like.setUser(user);
@@ -47,7 +47,7 @@ public class LikeServiceImpl implements LikeService{
     @Override
     public LikeTweetResponseDto removeTweet(LikeTweetRequestDto likeTweetRequestDto, String username) {
         User user = userRepository
-                .findUserByUsername(username)
+                .findUserByEmail(username)
                 .orElseThrow(()-> new UserNotFoundException("User with username: " + username + " not found."));
         Like like = likeRepository.getLikeOfTweetByTweetIdAndUsername(likeTweetRequestDto.getTweetId(), username);
         like.setUser(user);
@@ -61,7 +61,7 @@ public class LikeServiceImpl implements LikeService{
             throw new LikeExistsException("Already liked.");
         }
         User user = userRepository
-                .findUserByUsername(username)
+                .findUserByEmail(username)
                 .orElseThrow(()-> new UserNotFoundException("User with username: " + username + " not found."));
         Like like = dtoMapping.MappingLikeCommentRequestToLike(likeCommentRequestDto);
         like.setUser(user);
@@ -72,7 +72,7 @@ public class LikeServiceImpl implements LikeService{
     @Override
     public LikeCommentResponseDto removeComment(LikeCommentRequestDto likeCommentRequestDto, String username) {
         User user = userRepository
-                .findUserByUsername(username)
+                .findUserByEmail(username)
                 .orElseThrow(()-> new UserNotFoundException("User with username: " + username + " not found."));
         Like like = likeRepository.getLikeOfCommentByCommentIdAndUsername(likeCommentRequestDto.getCommentId(), username);
         like.setUser(user);

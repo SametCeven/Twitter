@@ -37,7 +37,7 @@ public class CommentServiceImpl implements CommentService{
     @Override
     public CommentResponseDto save(CommentRequestDto commentRequestDto, String username) {
         User user = userRepository
-                .findUserByUsername(username)
+                .findUserByEmail(username)
                 .orElseThrow(() -> new UserNotFoundException("User with " + username + " username not found."));
         Comment comment = dtoMapping.MappingCommentRequestToComment(commentRequestDto);
 
@@ -51,7 +51,7 @@ public class CommentServiceImpl implements CommentService{
     @Override
     public CommentResponseDto put(Long id, CommentRequestDto commentRequestDto, String username) {
         User user = userRepository
-                .findUserByUsername(username)
+                .findUserByEmail(username)
                 .orElseThrow(() -> new UserNotFoundException("User with " + username + " username not found."));
         Comment comment = dtoMapping.MappingCommentRequestToComment(commentRequestDto);
         
@@ -71,7 +71,7 @@ public class CommentServiceImpl implements CommentService{
     @Override
     public CommentResponseDto patch(Long id, CommentRequestDto commentRequestDto, String username) {
         User user = userRepository
-                .findUserByUsername(username)
+                .findUserByEmail(username)
                 .orElseThrow(() -> new UserNotFoundException("User with " + username + " username not found."));
         Comment comment = commentRepository
                 .findById(id)

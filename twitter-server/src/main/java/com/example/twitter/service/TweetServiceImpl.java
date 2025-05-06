@@ -38,7 +38,7 @@ public class TweetServiceImpl implements TweetService{
         tweet.setPicture(tweetRequestDto.getPicture());
 
         User user = userRepository
-                .findUserByUsername(username)
+                .findUserByEmail(username)
                 .orElseThrow(()->new UserNotFoundException("User not found"));
 
         user.addTweet(tweet);
@@ -50,9 +50,18 @@ public class TweetServiceImpl implements TweetService{
     }
 
     @Override
+    public List<TweetResponseDto> getAll() {
+        return tweetRepository
+                .findAll()
+                .stream()
+                .map((tweet)-> dtoMapping.MappingTweetToTweetResponseDto(tweet))
+                .toList();
+    }
+
+    @Override
     public List<TweetResponseDto> getByUserId(String username) {
         User user = userRepository
-                .findUserByUsername(username)
+                .findUserByEmail(username)
                 .orElseThrow(()->new UserNotFoundException("User with username:" + username + " does not exist"));
         List<Tweet> tweets = tweetRepository.getByUserId(user.getId());
         List<TweetResponseDto> responseDtos = new ArrayList<>();
@@ -73,7 +82,7 @@ public class TweetServiceImpl implements TweetService{
     @Override
     public TweetResponseDto put(Long id, TweetRequestDto tweetRequestDto, String username) {
         User user = userRepository
-                .findUserByUsername(username)
+                .findUserByEmail(username)
                 .orElseThrow(()->new UserNotFoundException("User not found"));
         Optional<Tweet> tweetOptional = tweetRepository.findById(id);
 
@@ -96,7 +105,7 @@ public class TweetServiceImpl implements TweetService{
     @Override
     public TweetResponseDto patch(Long id, TweetRequestDto tweetRequestDto, String username) {
         User user = userRepository
-                .findUserByUsername(username)
+                .findUserByEmail(username)
                 .orElseThrow(()->new UserNotFoundException("User not found"));
         Tweet tweet = tweetRepository
                 .findById(id)
