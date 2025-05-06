@@ -5,6 +5,7 @@ import com.example.twitter.dto.RetweetCommentResponseDto;
 import com.example.twitter.dto.RetweetTweetRequestDto;
 import com.example.twitter.dto.RetweetTweetResponseDto;
 import com.example.twitter.service.RetweetService;
+import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -34,7 +35,7 @@ public class RetweetController {
     @DeleteMapping("/tweet/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteTweet(
-            @PathVariable Long id){
+            @Positive @PathVariable Long id){
         retweetService.deleteTweet(id);
     }
 
@@ -50,7 +51,7 @@ public class RetweetController {
     @DeleteMapping("/comment/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteComment(
-            @PathVariable Long id){
+            @Positive @PathVariable Long id){
         retweetService.deleteComment(id);
     }
 }
