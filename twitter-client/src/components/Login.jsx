@@ -1,18 +1,20 @@
 import { useContext, useEffect, useState } from "react"
 import { GlobalContext } from "../context/GlobalContext"
 import useAxiosPost from "../hooks/useAxiosPost";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 export default function LoginPage() {
 
-    const {loggedInUser, setLoggedInUser, token, setToken } = useContext(GlobalContext)
+    const { loggedInUser, setLoggedInUser, token, setToken } = useContext(GlobalContext)
     const [user, setUser] = useState({
         email: "",
         password: "",
     });
     const [data, loading, error, postData] = useAxiosPost();
+    const history = useHistory();
 
     function handleChange(e) {
-        const {value, name} = e.target;
+        const { value, name } = e.target;
         setUser({ ...user, [name]: value })
     }
 
@@ -21,14 +23,19 @@ export default function LoginPage() {
         postData("/auth/login/user", user)
     }
 
-    function handleLogoutSubmit(e){
+    function handleLogoutSubmit(e) {
         e.preventDefault();
         localStorage.removeItem("JWT_Token");
         setToken("");
         setLoggedInUser({});
     }
 
-    useEffect(()=>{
+    function handleGoHomeSubmit(e) {
+        e.preventDefault();
+        history.push("/");
+    }
+
+    useEffect(() => {
         if (data && data.token) {
             setLoggedInUser({
                 id: data.id,
@@ -37,18 +44,19 @@ export default function LoginPage() {
             })
             setToken(data.token);
         }
-    },[data])
+    }, [data])
 
-    if(token){
-        return(
-            <form onSubmit={handleLogoutSubmit}>
-                <p> Logged In </p>
-                <button> Log Out </button>
-            </form>
+    if (token) {
+        return (
+            <div className="flex flex-col w-80 gap-10 mt-20 mx-20">
+                <form className="flex flex-col items-center gap-10" onSubmit={handleLogoutSubmit}>
+                    <p> Logged in as {loggedInUser.username} </p>
+                    <button className="btn"> Logout </button>
+                </form>
+                <button className="btn" onClick={handleGoHomeSubmit}> Home </button>
+            </div>
         )
     }
-
-    
 
     return (
         <form
@@ -65,7 +73,7 @@ export default function LoginPage() {
                 <input className="input" type="text" name="password" id="password" onChange={handleChange} />
             </div>
 
-            <button className="hover:bg-amber-800" type="submit"> {loading ? "Logging In ..." : "Login"} </button>
+            <button className="btn" type="submit"> {loading ? "Logging In ..." : "Login"} </button>
 
             {error && <p> Login failed. Try again. </p>}
 
