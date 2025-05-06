@@ -1,6 +1,7 @@
 package com.example.twitter.config;
 
 import com.example.twitter.security.ApiKeyFilter;
+import com.example.twitter.security.JwtFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,7 +32,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity, ApiKeyFilter apiKeyFilter) throws Exception{
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity, ApiKeyFilter apiKeyFilter, JwtFilter jwtFilter) throws Exception{
         return httpSecurity.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/auth/register/user").permitAll();
@@ -40,6 +41,7 @@ public class SecurityConfig {
                         auth.anyRequest().authenticated();
                 })
                 .addFilterBefore(apiKeyFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
                 .build();

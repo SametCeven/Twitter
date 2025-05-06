@@ -4,9 +4,14 @@ import com.example.twitter.dto.UserLoginRequestDto;
 import com.example.twitter.dto.UserLoginResponseDto;
 import com.example.twitter.dto.UserRegisterRequestDto;
 import com.example.twitter.dto.UserRegisterResponseDto;
+import com.example.twitter.security.JwtUtil;
 import com.example.twitter.service.AuthService;
 import jakarta.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,9 +20,13 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private AuthService authService;
+    private AuthenticationManager authenticationManager;
+    private JwtUtil jwtUtil;
 
-    public AuthController(AuthService authService){
+    public AuthController(AuthService authService, AuthenticationManager authenticationManager, JwtUtil jwtUtil){
         this.authService = authService;
+        this.authenticationManager = authenticationManager;
+        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping("/register/user")

@@ -50,11 +50,12 @@ public class DtoMappingImpl implements DtoMapping{
     }
 
     @Override
-    public UserLoginResponseDto MappingUserToUserLoginResponseDto(User user) {
+    public UserLoginResponseDto MappingUserToUserLoginResponseDto(User user, String token) {
         return new UserLoginResponseDto(
                 user.getId(),
                 user.getUsername(),
-                user.getEmail()
+                user.getEmail(),
+                token
         );
     }
 

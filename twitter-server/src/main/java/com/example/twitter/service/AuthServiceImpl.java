@@ -11,6 +11,7 @@ import com.example.twitter.exceptions.UserNotFoundException;
 import com.example.twitter.exceptions.UsernameExistsException;
 import com.example.twitter.repository.RoleRepository;
 import com.example.twitter.repository.UserRepository;
+import com.example.twitter.security.JwtUtil;
 import com.example.twitter.utils.DtoMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -39,6 +40,7 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
+    private JwtUtil jwtUtil;
 
     private final String ROLE_USER = "ROLE_USER";
     private final String ROLE_ADMIN = "ROLE_ADMIN";
@@ -48,11 +50,13 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
             DtoMapping dtoMapping,
             UserRepository userRepository,
             RoleRepository roleRepository,
-            PasswordEncoder passwordEncoder){
+            PasswordEncoder passwordEncoder,
+            JwtUtil jwtUtil){
         this.dtoMapping = dtoMapping;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
     }
 
     @Override
@@ -128,7 +132,9 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
         User user = userRepository
                 .findUserByEmail(userLoginRequestDto.getEmail())
                 .orElseThrow(()-> new UserNotFoundException("User with username: " + userLoginRequestDto.getEmail() + " not found."));
-        return dtoMapping.MappingUserToUserLoginResponseDto(user);
+
+        String token = jwtUtil.generateToken(user.getEmail());
+        return dtoMapping.MappingUserToUserLoginResponseDto(user,token);
     }
 
     @Override
