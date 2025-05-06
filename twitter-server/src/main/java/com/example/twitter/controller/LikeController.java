@@ -1,14 +1,14 @@
 package com.example.twitter.controller;
 
-import com.example.twitter.dto.LikeRequestDto;
-import com.example.twitter.dto.LikeResponseDto;
+import com.example.twitter.dto.LikeCommentRequestDto;
+import com.example.twitter.dto.LikeCommentResponseDto;
+import com.example.twitter.dto.LikeTweetRequestDto;
+import com.example.twitter.dto.LikeTweetResponseDto;
 import com.example.twitter.service.LikeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 public class LikeController {
@@ -20,22 +20,40 @@ public class LikeController {
         this.likeService = likeService;
     }
 
-    @PostMapping("/like")
+    @PostMapping("/like/tweet")
     @ResponseStatus(HttpStatus.CREATED)
-    public LikeResponseDto like(
-            @RequestBody LikeRequestDto likeRequestDto,
+    public LikeTweetResponseDto likeTweet(
+            @RequestBody LikeTweetRequestDto likeTweetRequestDto,
             Authentication authentication){
         String username = authentication.getName();
-        return likeService.save(likeRequestDto, username);
+        return likeService.saveTweet(likeTweetRequestDto, username);
     }
 
-    @PostMapping("/dislike")
+    @PostMapping("/dislike/tweet")
     @ResponseStatus(HttpStatus.CREATED)
-    public LikeResponseDto dislike(
-            @RequestBody LikeRequestDto likeRequestDto,
+    public LikeTweetResponseDto dislikeTweet(
+            @RequestBody LikeTweetRequestDto likeTweetRequestDto,
             Authentication authentication){
         String username = authentication.getName();
-        return likeService.remove(likeRequestDto, username);
+        return likeService.removeTweet(likeTweetRequestDto, username);
+    }
+
+    @PostMapping("/like/comment")
+    @ResponseStatus(HttpStatus.CREATED)
+    public LikeCommentResponseDto likeComment(
+            @RequestBody LikeCommentRequestDto likeCommentRequestDto,
+            Authentication authentication){
+        String username = authentication.getName();
+        return likeService.saveComment(likeCommentRequestDto, username);
+    }
+
+    @PostMapping("/dislike/comment")
+    @ResponseStatus(HttpStatus.CREATED)
+    public LikeCommentResponseDto dislikeComment(
+            @RequestBody LikeCommentRequestDto likeCommentRequestDto,
+            Authentication authentication){
+        String username = authentication.getName();
+        return likeService.removeComment(likeCommentRequestDto, username);
     }
 
 

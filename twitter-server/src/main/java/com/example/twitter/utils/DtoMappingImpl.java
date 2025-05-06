@@ -4,7 +4,6 @@ import com.example.twitter.dto.*;
 import com.example.twitter.entity.*;
 import com.example.twitter.exceptions.CommentNotFoundException;
 import com.example.twitter.exceptions.TweetNotFoundException;
-import com.example.twitter.exceptions.UserNotFoundException;
 import com.example.twitter.repository.CommentRepository;
 import com.example.twitter.repository.TweetRepository;
 import com.example.twitter.repository.UserRepository;
@@ -119,7 +118,9 @@ public class DtoMappingImpl implements DtoMapping{
                 comment.getCreatedDate(),
                 comment.getPicture(),
                 comment.getTweet().getId(),
-                comment.getUser().getId()
+                comment.getUser().getId(),
+                commentRepository.getLikeCount(comment.getId()),
+                commentRepository.getRetweetCount(comment.getId())
         );
     }
 
@@ -136,8 +137,8 @@ public class DtoMappingImpl implements DtoMapping{
     }
 
     @Override
-    public LikeResponseDto MappingLikeToLikeResponseDto(Like like) {
-        return new LikeResponseDto(
+    public LikeTweetResponseDto MappingLikeToLikeTweetResponseDto(Like like) {
+        return new LikeTweetResponseDto(
                 like.getId(),
                 like.getUser().getId(),
                 like.getTweet().getId()
@@ -145,18 +146,37 @@ public class DtoMappingImpl implements DtoMapping{
     }
 
     @Override
-    public Like MappingLikeRequestToLike(LikeRequestDto likeRequestDto) {
+    public Like MappingLikeTweetRequestToLike(LikeTweetRequestDto likeTweetRequestDto) {
         Like like = new Like();
         Tweet tweet = tweetRepository
-                .findById(likeRequestDto.getTweetId())
-                .orElseThrow(()-> new TweetNotFoundException("Tweet with id: " + likeRequestDto.getTweetId() + " not found."));
+                .findById(likeTweetRequestDto.getTweetId())
+                .orElseThrow(()-> new TweetNotFoundException("Tweet with id: " + likeTweetRequestDto.getTweetId() + " not found."));
         like.setTweet(tweet);
-        return  like;
+        return like;
     }
 
     @Override
-    public RetweetResponseDto MappingRetweetToRetweetResponseDto(Retweet retweet) {
-        return new RetweetResponseDto(
+    public LikeCommentResponseDto MappingLikeToLikeCommentResponseResponseDto(Like like) {
+        return new LikeCommentResponseDto(
+                like.getId(),
+                like.getUser().getId(),
+                like.getComment().getId()
+        );
+    }
+
+    @Override
+    public Like MappingLikeCommentRequestToLike(LikeCommentRequestDto likeCommentRequestDto) {
+        Like like = new Like();
+        Comment comment = commentRepository
+                .findById(likeCommentRequestDto.getCommentId())
+                .orElseThrow(()-> new CommentNotFoundException("Comment with id: " + likeCommentRequestDto.getCommentId() + " not found."));
+        like.setComment(comment);
+        return like;
+    }
+
+    @Override
+    public RetweetTweetResponseDto MappingRetweetToRetweetTweetResponseDto(Retweet retweet) {
+        return new RetweetTweetResponseDto(
                 retweet.getId(),
                 retweet.getUser().getId(),
                 retweet.getTweet().getId()
@@ -164,12 +184,31 @@ public class DtoMappingImpl implements DtoMapping{
     }
 
     @Override
-    public Retweet MappingRetweetRequestToRetweet(RetweetRequestDto retweetRequestDto) {
+    public Retweet MappingRetweetTweetRequestToRetweet(RetweetTweetRequestDto retweetTweetRequestDto) {
         Retweet retweet = new Retweet();
         Tweet tweet = tweetRepository
-                .findById(retweetRequestDto.getTweetId())
-                .orElseThrow(()-> new TweetNotFoundException("Tweet with id: " + retweetRequestDto.getTweetId() + " not found."));
+                .findById(retweetTweetRequestDto.getTweetId())
+                .orElseThrow(()-> new TweetNotFoundException("Tweet with id: " + retweetTweetRequestDto.getTweetId() + " not found."));
         retweet.setTweet(tweet);
+        return retweet;
+    }
+
+    @Override
+    public RetweetCommentResponseDto MappingRetweetToRetweetCommentResponseDto(Retweet retweet) {
+        return new RetweetCommentResponseDto(
+                retweet.getId(),
+                retweet.getUser().getId(),
+                retweet.getComment().getId()
+        );
+    }
+
+    @Override
+    public Retweet MappingRetweetCommentRequestToRetweet(RetweetCommentRequestDto retweetCommentRequestDto) {
+        Retweet retweet = new Retweet();
+        Comment comment = commentRepository
+                .findById(retweetCommentRequestDto.getCommentId())
+                .orElseThrow(()-> new TweetNotFoundException("Tweet with id: " + retweetCommentRequestDto.getCommentId() + " not found."));
+        retweet.setComment(comment);
         return retweet;
     }
 

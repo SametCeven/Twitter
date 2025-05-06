@@ -1,7 +1,9 @@
 package com.example.twitter.controller;
 
-import com.example.twitter.dto.RetweetRequestDto;
-import com.example.twitter.dto.RetweetResponseDto;
+import com.example.twitter.dto.RetweetCommentRequestDto;
+import com.example.twitter.dto.RetweetCommentResponseDto;
+import com.example.twitter.dto.RetweetTweetRequestDto;
+import com.example.twitter.dto.RetweetTweetResponseDto;
 import com.example.twitter.service.RetweetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,19 +22,35 @@ public class RetweetController {
         this.retweetService = retweetService;
     }
 
-    @PostMapping
+    @PostMapping("/tweet")
     @ResponseStatus(HttpStatus.CREATED)
-    public RetweetResponseDto post(
-            @RequestBody RetweetRequestDto retweetRequestDto,
+    public RetweetTweetResponseDto postTweet(
+            @RequestBody RetweetTweetRequestDto retweetTweetRequestDto,
             Authentication authentication){
         String username = authentication.getName();
-        return retweetService.save(retweetRequestDto, username);
+        return retweetService.saveTweet(retweetTweetRequestDto, username);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/tweet/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(
+    public void deleteTweet(
             @PathVariable Long id){
-        retweetService.delete(id);
+        retweetService.deleteTweet(id);
+    }
+
+    @PostMapping("/comment")
+    @ResponseStatus(HttpStatus.CREATED)
+    public RetweetCommentResponseDto postComment(
+            @RequestBody RetweetCommentRequestDto retweetCommentRequestDto,
+            Authentication authentication){
+        String username = authentication.getName();
+        return retweetService.saveComment(retweetCommentRequestDto, username);
+    }
+
+    @DeleteMapping("/comment/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteComment(
+            @PathVariable Long id){
+        retweetService.deleteComment(id);
     }
 }

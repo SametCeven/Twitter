@@ -1,15 +1,15 @@
 package com.example.twitter.service;
 
-import com.example.twitter.dto.LikeRequestDto;
-import com.example.twitter.dto.LikeResponseDto;
-import com.example.twitter.entity.Comment;
-import com.example.twitter.entity.Like;
-import com.example.twitter.entity.Tweet;
-import com.example.twitter.entity.User;
-
-import java.util.List;
+import com.example.twitter.dto.LikeCommentRequestDto;
+import com.example.twitter.dto.LikeCommentResponseDto;
+import com.example.twitter.dto.LikeTweetRequestDto;
+import com.example.twitter.dto.LikeTweetResponseDto;
 
 public interface LikeService {
-    LikeResponseDto save(LikeRequestDto likeRequestDto, String username);
-    LikeResponseDto remove(LikeRequestDto likeRequestDto, String username);
+    LikeTweetResponseDto saveTweet(LikeTweetRequestDto likeTweetRequestDto, String username);
+    LikeTweetResponseDto removeTweet(LikeTweetRequestDto likeTweetRequestDto, String username);
+
+    LikeCommentResponseDto saveComment(LikeCommentRequestDto likeCommentRequestDto, String username);
+    LikeCommentResponseDto removeComment(LikeCommentRequestDto likeCommentRequestDto, String username);
+
 }

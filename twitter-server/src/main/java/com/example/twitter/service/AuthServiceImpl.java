@@ -1,6 +1,7 @@
 package com.example.twitter.service;
 
 import com.example.twitter.dto.UserLoginRequestDto;
+import com.example.twitter.dto.UserLoginResponseDto;
 import com.example.twitter.dto.UserRegisterRequestDto;
 import com.example.twitter.dto.UserRegisterResponseDto;
 import com.example.twitter.entity.Role;
@@ -115,7 +116,7 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     }
 
     @Override
-    public UserRegisterResponseDto loginUser(UserLoginRequestDto userLoginRequestDto) {
+    public UserLoginResponseDto loginUser(UserLoginRequestDto userLoginRequestDto) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 userLoginRequestDto.getEmail(),
                 userLoginRequestDto.getPassword()
@@ -127,7 +128,7 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
         User user = userRepository
                 .findUserByEmail(userLoginRequestDto.getEmail())
                 .orElseThrow(()-> new UserNotFoundException("User with username: " + userLoginRequestDto.getEmail() + " not found."));
-        return dtoMapping.MappingUserToUserRegisterResponseDto(user);
+        return dtoMapping.MappingUserToUserLoginResponseDto(user);
     }
 
     @Override
@@ -191,7 +192,7 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     }
 
     @Override
-    public UserRegisterResponseDto loginAdmin(UserLoginRequestDto userLoginRequestDto) {
+    public UserLoginResponseDto loginAdmin(UserLoginRequestDto userLoginRequestDto) {
         return loginUser(userLoginRequestDto);
     }
 

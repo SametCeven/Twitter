@@ -1,9 +1,10 @@
 package com.example.twitter.service;
 
-import com.example.twitter.dto.RetweetRequestDto;
-import com.example.twitter.dto.RetweetResponseDto;
+import com.example.twitter.dto.RetweetCommentRequestDto;
+import com.example.twitter.dto.RetweetCommentResponseDto;
+import com.example.twitter.dto.RetweetTweetRequestDto;
+import com.example.twitter.dto.RetweetTweetResponseDto;
 import com.example.twitter.entity.Retweet;
-import com.example.twitter.entity.Tweet;
 import com.example.twitter.entity.User;
 import com.example.twitter.exceptions.RetweetExistsException;
 import com.example.twitter.exceptions.RetweetNotFoundException;
@@ -30,21 +31,43 @@ public class RetweetServiceImpl implements RetweetService{
     }
 
     @Override
-    public RetweetResponseDto save(RetweetRequestDto retweetRequestDto, String username) {
-        if(retweetRepository.getRetweetOfTweetByTweetIdAndUsername(retweetRequestDto.getTweetId(), username) != null){
+    public RetweetTweetResponseDto saveTweet(RetweetTweetRequestDto retweetTweetRequestDto, String username) {
+        if(retweetRepository.getRetweetOfTweetByTweetIdAndUsername(retweetTweetRequestDto.getTweetId(), username) != null){
             throw new RetweetExistsException("Already retweeted.");
         }
         User user = userRepository
                 .findUserByUsername(username)
                 .orElseThrow(()-> new UserNotFoundException("User with username: " + username + " not found."));
-        Retweet retweet = dtoMapping.MappingRetweetRequestToRetweet(retweetRequestDto);
+        Retweet retweet = dtoMapping.MappingRetweetTweetRequestToRetweet(retweetTweetRequestDto);
         retweet.setUser(user);
         retweetRepository.save(retweet);
-        return dtoMapping.MappingRetweetToRetweetResponseDto(retweet);
+        return dtoMapping.MappingRetweetToRetweetTweetResponseDto(retweet);
     }
 
     @Override
-    public void delete(Long id) {
+    public void deleteTweet(Long id) {
+        if(retweetRepository.findById(id).isEmpty()){
+            throw new RetweetNotFoundException("Retweet with id: " + id + " not found.");
+        }
+        retweetRepository.deleteById(id);
+    }
+
+    @Override
+    public RetweetCommentResponseDto saveComment(RetweetCommentRequestDto retweetCommentRequestDto, String username) {
+        if(retweetRepository.getRetweetOfCommentByCommentIdAndUsername(retweetCommentRequestDto.getCommentId(), username) != null){
+            throw new RetweetExistsException("Already retweeted.");
+        }
+        User user = userRepository
+                .findUserByUsername(username)
+                .orElseThrow(()-> new UserNotFoundException("User with username: " + username + " not found."));
+        Retweet retweet = dtoMapping.MappingRetweetCommentRequestToRetweet(retweetCommentRequestDto);
+        retweet.setUser(user);
+        retweetRepository.save(retweet);
+        return dtoMapping.MappingRetweetToRetweetCommentResponseDto(retweet);
+    }
+
+    @Override
+    public void deleteComment(Long id) {
         if(retweetRepository.findById(id).isEmpty()){
             throw new RetweetNotFoundException("Retweet with id: " + id + " not found.");
         }

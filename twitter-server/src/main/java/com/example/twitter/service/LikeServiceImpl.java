@@ -1,7 +1,9 @@
 package com.example.twitter.service;
 
-import com.example.twitter.dto.LikeRequestDto;
-import com.example.twitter.dto.LikeResponseDto;
+import com.example.twitter.dto.LikeCommentRequestDto;
+import com.example.twitter.dto.LikeCommentResponseDto;
+import com.example.twitter.dto.LikeTweetRequestDto;
+import com.example.twitter.dto.LikeTweetResponseDto;
 import com.example.twitter.entity.Like;
 import com.example.twitter.entity.User;
 import com.example.twitter.exceptions.LikeExistsException;
@@ -29,28 +31,53 @@ public class LikeServiceImpl implements LikeService{
 
 
     @Override
-    public LikeResponseDto save(LikeRequestDto likeRequestDto, String username) {
-        if(likeRepository.getLikeOfTweetByTweetIdAndUsername(likeRequestDto.getTweetId(), username) != null){
+    public LikeTweetResponseDto saveTweet(LikeTweetRequestDto likeTweetRequestDto, String username) {
+        if(likeRepository.getLikeOfTweetByTweetIdAndUsername(likeTweetRequestDto.getTweetId(), username) != null){
             throw new LikeExistsException("Already liked.");
         }
         User user = userRepository
                 .findUserByUsername(username)
                 .orElseThrow(()-> new UserNotFoundException("User with username: " + username + " not found."));
-        Like like = dtoMapping.MappingLikeRequestToLike(likeRequestDto);
+        Like like = dtoMapping.MappingLikeTweetRequestToLike(likeTweetRequestDto);
         like.setUser(user);
         likeRepository.save(like);
-        return dtoMapping.MappingLikeToLikeResponseDto(like);
+        return dtoMapping.MappingLikeToLikeTweetResponseDto(like);
     }
 
     @Override
-    public LikeResponseDto remove(LikeRequestDto likeRequestDto, String username) {
+    public LikeTweetResponseDto removeTweet(LikeTweetRequestDto likeTweetRequestDto, String username) {
         User user = userRepository
                 .findUserByUsername(username)
                 .orElseThrow(()-> new UserNotFoundException("User with username: " + username + " not found."));
-        Like like = likeRepository.getLikeOfTweetByTweetIdAndUsername(likeRequestDto.getTweetId(), username);
+        Like like = likeRepository.getLikeOfTweetByTweetIdAndUsername(likeTweetRequestDto.getTweetId(), username);
         like.setUser(user);
         likeRepository.deleteById(like.getId());
-        return dtoMapping.MappingLikeToLikeResponseDto(like);
+        return dtoMapping.MappingLikeToLikeTweetResponseDto(like);
+    }
+
+    @Override
+    public LikeCommentResponseDto saveComment(LikeCommentRequestDto likeCommentRequestDto, String username) {
+        if(likeRepository.getLikeOfCommentByCommentIdAndUsername(likeCommentRequestDto.getCommentId(), username) != null){
+            throw new LikeExistsException("Already liked.");
+        }
+        User user = userRepository
+                .findUserByUsername(username)
+                .orElseThrow(()-> new UserNotFoundException("User with username: " + username + " not found."));
+        Like like = dtoMapping.MappingLikeCommentRequestToLike(likeCommentRequestDto);
+        like.setUser(user);
+        likeRepository.save(like);
+        return dtoMapping.MappingLikeToLikeCommentResponseResponseDto(like);
+    }
+
+    @Override
+    public LikeCommentResponseDto removeComment(LikeCommentRequestDto likeCommentRequestDto, String username) {
+        User user = userRepository
+                .findUserByUsername(username)
+                .orElseThrow(()-> new UserNotFoundException("User with username: " + username + " not found."));
+        Like like = likeRepository.getLikeOfCommentByCommentIdAndUsername(likeCommentRequestDto.getCommentId(), username);
+        like.setUser(user);
+        likeRepository.deleteById(like.getId());
+        return dtoMapping.MappingLikeToLikeCommentResponseResponseDto(like);
     }
 
 

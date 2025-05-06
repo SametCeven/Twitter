@@ -15,4 +15,16 @@ public interface LikeRepository extends JpaRepository<Like,Long> {
             "WHERE l.tweet_id = :tweetId AND u.username = :username",
             nativeQuery = true)
     Like getLikeOfTweetByTweetIdAndUsername(Long tweetId, String username);
+
+    @Query(value =
+            "SELECT l.* \n" +
+                    "FROM twit.likes AS l\n" +
+                    "INNER JOIN twit.users AS u\n" +
+                    "ON l.user_id = u.id\n" +
+                    "WHERE l.comment_id = :commentId AND u.username = :username",
+            nativeQuery = true)
+    Like getLikeOfCommentByCommentIdAndUsername(Long commentId, String username);
+
+
+
 }

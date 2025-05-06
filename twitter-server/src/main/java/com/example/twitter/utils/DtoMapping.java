@@ -11,17 +11,23 @@ public interface DtoMapping {
     User MappingUserLoginRequestToUser(UserLoginRequestDto userLoginRequestDto);
 
     UserResponseDto MappingUserToUserResponseDto(User user);
-    TweetResponseDto MappingTweetToTweetResponseDto(Tweet tweet);
 
+    TweetResponseDto MappingTweetToTweetResponseDto(Tweet tweet);
     Tweet MappingTweetRequestToTweet(TweetRequestDto tweetRequestDto);
+
     CommentResponseDto MappingCommentToCommentResponseDto(Comment comment);
     Comment MappingCommentRequestToComment(CommentRequestDto commentRequestDto);
 
-    LikeResponseDto MappingLikeToLikeResponseDto(Like like);
-    Like MappingLikeRequestToLike(LikeRequestDto likeRequestDto);
+    LikeTweetResponseDto MappingLikeToLikeTweetResponseDto(Like like);
+    Like MappingLikeTweetRequestToLike(LikeTweetRequestDto likeTweetRequestDto);
 
-    RetweetResponseDto MappingRetweetToRetweetResponseDto(Retweet retweet);
-    Retweet MappingRetweetRequestToRetweet(RetweetRequestDto retweetRequestDto);
+    LikeCommentResponseDto MappingLikeToLikeCommentResponseResponseDto(Like like);
+    Like MappingLikeCommentRequestToLike(LikeCommentRequestDto likeCommentRequestDto);
 
+    RetweetTweetResponseDto MappingRetweetToRetweetTweetResponseDto(Retweet retweet);
+    Retweet MappingRetweetTweetRequestToRetweet(RetweetTweetRequestDto retweetTweetRequestDto);
+
+    RetweetCommentResponseDto MappingRetweetToRetweetCommentResponseDto(Retweet retweet);
+    Retweet MappingRetweetCommentRequestToRetweet(RetweetCommentRequestDto retweetCommentRequestDto);
 
 }

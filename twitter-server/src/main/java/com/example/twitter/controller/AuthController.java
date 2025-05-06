@@ -1,6 +1,7 @@
 package com.example.twitter.controller;
 
 import com.example.twitter.dto.UserLoginRequestDto;
+import com.example.twitter.dto.UserLoginResponseDto;
 import com.example.twitter.dto.UserRegisterRequestDto;
 import com.example.twitter.dto.UserRegisterResponseDto;
 import com.example.twitter.service.AuthService;
@@ -32,12 +33,12 @@ public class AuthController {
     }
 
     @PostMapping("/login/user")
-    public UserRegisterResponseDto loginUser(@Validated @RequestBody UserLoginRequestDto userLoginRequestDto){
+    public UserLoginResponseDto loginUser(@Validated @RequestBody UserLoginRequestDto userLoginRequestDto){
         return authService.loginUser(userLoginRequestDto);
     }
 
     @PostMapping("/login/admin")
-    public UserRegisterResponseDto loginAdmin(@Validated @RequestBody UserLoginRequestDto userLoginRequestDto){
+    public UserLoginResponseDto loginAdmin(@Validated @RequestBody UserLoginRequestDto userLoginRequestDto){
         return authService.loginAdmin(userLoginRequestDto);
     }
 

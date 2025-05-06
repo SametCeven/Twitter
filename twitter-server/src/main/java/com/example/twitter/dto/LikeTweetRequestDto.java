@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class RetweetRequestDto {
+public class LikeTweetRequestDto {
     private Long tweetId;
 }

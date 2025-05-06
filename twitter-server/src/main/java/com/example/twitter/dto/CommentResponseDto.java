@@ -16,4 +16,6 @@ public class CommentResponseDto {
     private byte[] picture;
     private Long tweetId;
     private Long userId;
+    private Integer likeCount;
+    private Integer retweetCount;
 }
