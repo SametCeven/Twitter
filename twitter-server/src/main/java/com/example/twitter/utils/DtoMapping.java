@@ -9,6 +9,7 @@ public interface DtoMapping {
 
     UserLoginResponseDto MappingUserToUserLoginResponseDto(User user, String token);
     User MappingUserLoginRequestToUser(UserLoginRequestDto userLoginRequestDto);
+    UserLoginResponseDto MappingUserToUserLoginResponseDto(User user);
 
     UserResponseDto MappingUserToUserResponseDto(User user);
 

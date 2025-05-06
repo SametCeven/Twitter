@@ -138,6 +138,14 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     }
 
     @Override
+    public UserLoginResponseDto getUserByEmail(String username) {
+        User user = userRepository
+                .findUserByEmail(username)
+                .orElseThrow(()-> new UserNotFoundException("User with email: " + username + " not found."));
+        return dtoMapping.MappingUserToUserLoginResponseDto(user);
+    }
+
+    @Override
     public UserRegisterResponseDto registerAdmin(UserRegisterRequestDto userRegisterRequestDto){
         Optional<User> userByUsername = userRepository.findUserByUsername(userRegisterRequestDto.getUsername());
         if(userByUsername.isPresent()) throw new UsernameExistsException("Username exists!");

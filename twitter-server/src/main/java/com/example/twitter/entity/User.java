@@ -68,6 +68,16 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> authorities = new HashSet<>();
 
+    @Override
+    public String getUsername(){
+        return this.email;
+    }
+
+    public String getRealUsername(){
+        return this.username;
+    }
+
+
     public void addTweet(Tweet tweet){
         if(tweets == null) tweets = new ArrayList<>();
         tweets.add(tweet);

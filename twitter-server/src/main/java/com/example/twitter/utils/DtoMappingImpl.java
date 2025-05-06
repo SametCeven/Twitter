@@ -34,7 +34,7 @@ public class DtoMappingImpl implements DtoMapping{
     public UserRegisterResponseDto MappingUserToUserRegisterResponseDto(User user) {
         return new UserRegisterResponseDto(
                 user.getId(),
-                user.getUsername(),
+                user.getRealUsername(),
                 user.getEmail()
         );
     }
@@ -53,9 +53,19 @@ public class DtoMappingImpl implements DtoMapping{
     public UserLoginResponseDto MappingUserToUserLoginResponseDto(User user, String token) {
         return new UserLoginResponseDto(
                 user.getId(),
-                user.getUsername(),
+                user.getRealUsername(),
                 user.getEmail(),
                 token
+        );
+    }
+
+    @Override
+    public UserLoginResponseDto MappingUserToUserLoginResponseDto(User user) {
+        return new UserLoginResponseDto(
+                user.getId(),
+                user.getRealUsername(),
+                user.getEmail(),
+                null
         );
     }
 
@@ -72,7 +82,7 @@ public class DtoMappingImpl implements DtoMapping{
     public UserResponseDto MappingUserToUserResponseDto(User user) {
         return new UserResponseDto(
                 user.getId(),
-                user.getUsername(),
+                user.getRealUsername(),
                 user.getEmail(),
                 user.getFirstName(),
                 user.getLastName(),

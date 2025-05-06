@@ -51,6 +51,14 @@ public class AuthController {
         return authService.loginAdmin(userLoginRequestDto);
     }
 
+    @GetMapping("/me")
+    public UserLoginResponseDto getCurrentUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        System.out.println("email: " + username);
+        return authService.getUserByEmail(username);
+    }
+
     @PutMapping("/user/{id}")
     public UserRegisterResponseDto putUser(
             @Positive @PathVariable Long id,

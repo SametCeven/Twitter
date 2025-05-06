@@ -12,6 +12,7 @@ public interface AuthService{
     UserRegisterResponseDto patchUser(Long id, UserRegisterRequestDto userRegisterRequestDto);
     void deleteUser(Long id);
     UserLoginResponseDto loginUser(UserLoginRequestDto userLoginRequestDto);
+    UserLoginResponseDto getUserByEmail(String email);
 
     UserRegisterResponseDto registerAdmin(UserRegisterRequestDto userRegisterRequestDto);
     UserRegisterResponseDto putAdmin(Long id, UserRegisterRequestDto userRegisterRequestDto);
