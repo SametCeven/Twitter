@@ -1,5 +1,6 @@
 package com.example.twitter.service;
 
+import com.example.twitter.dto.UserLoginRequestDto;
 import com.example.twitter.dto.UserRegisterRequestDto;
 import com.example.twitter.dto.UserRegisterResponseDto;
 import com.example.twitter.entity.Role;
@@ -11,10 +12,14 @@ import com.example.twitter.repository.RoleRepository;
 import com.example.twitter.repository.UserRepository;
 import com.example.twitter.utils.DtoMapping;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,11 +28,15 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
-public class AuthServiceImpl implements AuthService{
+public class AuthServiceImpl implements AuthService, UserDetailsService {
+
+    @Autowired
+    @Lazy
+    private AuthenticationManager authenticationManager;
+
     private DtoMapping dtoMapping;
     private UserRepository userRepository;
     private RoleRepository roleRepository;
-    private AuthenticationManager authenticationManager;
     private PasswordEncoder passwordEncoder;
 
     private final String ROLE_USER = "ROLE_USER";
@@ -38,12 +47,10 @@ public class AuthServiceImpl implements AuthService{
             DtoMapping dtoMapping,
             UserRepository userRepository,
             RoleRepository roleRepository,
-            AuthenticationManager authenticationManager,
             PasswordEncoder passwordEncoder){
         this.dtoMapping = dtoMapping;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
-        this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -108,18 +115,18 @@ public class AuthServiceImpl implements AuthService{
     }
 
     @Override
-    public UserRegisterResponseDto loginUser(UserRegisterRequestDto userRegisterRequestDto) {
+    public UserRegisterResponseDto loginUser(UserLoginRequestDto userLoginRequestDto) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                userRegisterRequestDto.getUsername(),
-                userRegisterRequestDto.getPassword()
+                userLoginRequestDto.getEmail(),
+                userLoginRequestDto.getPassword()
         );
 
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         User user = userRepository
-                .findUserByUsername(userRegisterRequestDto.getUsername())
-                .orElseThrow(()-> new UserNotFoundException("User with username: " + userRegisterRequestDto.getUsername() + " not found."));
+                .findUserByEmail(userLoginRequestDto.getEmail())
+                .orElseThrow(()-> new UserNotFoundException("User with username: " + userLoginRequestDto.getEmail() + " not found."));
         return dtoMapping.MappingUserToUserRegisterResponseDto(user);
     }
 
@@ -184,9 +191,14 @@ public class AuthServiceImpl implements AuthService{
     }
 
     @Override
-    public UserRegisterResponseDto loginAdmin(UserRegisterRequestDto userRegisterRequestDto) {
-        return loginUser(userRegisterRequestDto);
+    public UserRegisterResponseDto loginAdmin(UserLoginRequestDto userLoginRequestDto) {
+        return loginUser(userLoginRequestDto);
     }
 
-
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository
+                .findUserByEmail(username)
+                .orElseThrow(()->new UsernameNotFoundException("Username not found"));
+    }
 }

@@ -51,6 +51,24 @@ public class DtoMappingImpl implements DtoMapping{
     }
 
     @Override
+    public UserLoginResponseDto MappingUserToUserLoginResponseDto(User user) {
+        return new UserLoginResponseDto(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail()
+        );
+    }
+
+    @Override
+    public User MappingUserLoginRequestToUser(UserLoginRequestDto userLoginRequestDto) {
+        String encodedPassword = passwordEncoder.encode(userLoginRequestDto.getPassword());
+        User user = new User();
+        user.setEmail(userLoginRequestDto.getEmail());
+        user.setPassword(encodedPassword);
+        return user;
+    }
+
+    @Override
     public UserResponseDto MappingUserToUserResponseDto(User user) {
         return new UserResponseDto(
                 user.getId(),

@@ -4,6 +4,6 @@ import org.springframework.http.HttpStatus;
 
 public class LikeExistsException extends TwitterException {
     public LikeExistsException(String message) {
-        super(message, HttpStatus.BAD_REQUEST);
+        super(message, HttpStatus.CONFLICT);
     }
 }

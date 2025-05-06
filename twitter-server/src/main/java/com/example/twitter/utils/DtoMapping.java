@@ -7,6 +7,9 @@ public interface DtoMapping {
     UserRegisterResponseDto MappingUserToUserRegisterResponseDto(User user);
     User MappingUserRegisterRequestToUser(UserRegisterRequestDto userRegisterRequestDto);
 
+    UserLoginResponseDto MappingUserToUserLoginResponseDto(User user);
+    User MappingUserLoginRequestToUser(UserLoginRequestDto userLoginRequestDto);
+
     UserResponseDto MappingUserToUserResponseDto(User user);
     TweetResponseDto MappingTweetToTweetResponseDto(Tweet tweet);
 
