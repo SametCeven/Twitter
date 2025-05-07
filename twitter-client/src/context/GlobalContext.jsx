@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import useLocalStorage from "../hooks/useLocalStorage";
 import axiosInstance from "../services/api";
-
+import useAxiosGet from "../hooks/useAxiosGet"
 
 export const GlobalContext = createContext();
 export default function GlobalContextProvider({children}){
@@ -11,8 +11,7 @@ export default function GlobalContextProvider({children}){
         email:"",
     });
     const [token, setToken] = useLocalStorage("JWT_Token","");
-   
-    
+    const [allUsers,loadingAllUsers,errorAllUsers] = useAxiosGet("/user", token);
     
     
     useEffect(()=>{
@@ -40,7 +39,7 @@ export default function GlobalContextProvider({children}){
 
 
     return(
-        <GlobalContext.Provider value={{loggedInUser, setLoggedInUser, token, setToken}}>
+        <GlobalContext.Provider value={{loggedInUser, setLoggedInUser, token, setToken, allUsers, loadingAllUsers, errorAllUsers}}>
             {children}
         </GlobalContext.Provider>
     )

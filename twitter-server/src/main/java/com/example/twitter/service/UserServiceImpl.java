@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
         for(User user:users){
             responseDtos.add(new UserResponseDto(
                     user.getId(),
-                    user.getUsername(),
+                    user.getRealUsername(),
                     user.getEmail(),
                     user.getFirstName(),
                     user.getLastName(),

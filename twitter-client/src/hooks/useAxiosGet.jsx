@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import axiosInstance from "../services/api"
 
 
-export default function useAxiosGet(url){
+export default function useAxiosGet(url, token){
 
     const [data,setData] = useState([])
     const [loading,setLoading] = useState(true)
@@ -12,7 +12,12 @@ export default function useAxiosGet(url){
         const getData = async () => {
             setLoading(true)
             try{
-                const res = await axiosInstance.get(url)
+                const res = await axiosInstance.get(url,{
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                console.log(res)
                 setData(res.data)
                 setLoading(false)
                 setError(false)

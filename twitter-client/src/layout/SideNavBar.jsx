@@ -11,7 +11,6 @@ export default function SideNavBar(){
         history.push("/login")
     }
 
-    console.log(loggedInUser)
 
     return(
         <nav className="flex flex-col gap-5 h-[100dvh] w-60 bg-c1 text-white px-5">
