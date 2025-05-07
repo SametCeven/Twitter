@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+@theme {
+    --font-display: "Satoshi", "sans-serif";
+    --color-c1: #2D336B;
+    --color-c2: #7886C7;
+    --color-c3: #A9B5DF;
+    --color-c4: #FFF2F2;
+  }
+
+
+
+
+.input-label{
+    @apply flex justify-between
+}
+.input{
+    @apply border
+}
+
+.btn{
+    @apply 
+    border rounded-2xl 
+    bg-c1 
+    text-white 
+    px-4
+    py-1
+    flex 
+    justify-center
+    hover:bg-c4
+    hover:text-c1
+    hover:cursor-pointer
+}
