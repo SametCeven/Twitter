@@ -76,6 +76,7 @@ public class UserRepositoryTest {
         comment.setCreatedDate(LocalDateTime.now());
         comment.setPicture(new byte[123]);
         comment.setUser(user2);
+        comment.setTweet(tweet);
 
         like1 = new Like();
         like1.setId(1L);
