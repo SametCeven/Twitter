@@ -98,8 +98,6 @@ public class UserRepositoryTest {
         retweet2.setUser(user1);
         retweet2.setComment(comment);
 
-
-
     }
 
 
