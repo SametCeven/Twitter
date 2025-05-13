@@ -31,19 +31,19 @@ public interface TweetRepository extends JpaRepository<Tweet,Long> {
 
     @Query(value =
             "SELECT COUNT(tweet_id)\n" +
-                    "FROM twit.tweets AS t\n" +
-                    "INNER JOIN twit.likes AS l\n" +
-                    "ON t.id = l.tweet_id\n" +
-                    "WHERE t.id = :id",
+            "FROM twit.tweets AS t\n" +
+            "INNER JOIN twit.likes AS l\n" +
+            "ON t.id = l.tweet_id\n" +
+            "WHERE t.id = :id",
             nativeQuery = true)
     Integer getLikeCount(Long id);
 
     @Query(value =
             "SELECT COUNT(tweet_id)\n" +
-                    "FROM twit.tweets AS t\n" +
-                    "INNER JOIN twit.retweets AS r\n" +
-                    "ON t.id = r.tweet_id\n" +
-                    "WHERE t.id = :id\n",
+            "FROM twit.tweets AS t\n" +
+            "INNER JOIN twit.retweets AS r\n" +
+            "ON t.id = r.tweet_id\n" +
+            "WHERE t.id = :id\n",
             nativeQuery = true)
     Integer getRetweetCount(Long id);
 

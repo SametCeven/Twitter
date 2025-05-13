@@ -3,7 +3,10 @@ package com.example.twitter.controller;
 import com.example.twitter.dto.TweetRequestDto;
 import com.example.twitter.dto.TweetResponseDto;
 import com.example.twitter.service.TweetService;
+import com.example.twitter.service.TweetServiceImpl;
 import jakarta.validation.constraints.Positive;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -15,6 +18,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/tweet")
 public class TweetController {
+
+    private static final Logger logger = LoggerFactory.getLogger(TweetServiceImpl.class);
 
     private TweetService tweetService;
 
@@ -29,6 +34,7 @@ public class TweetController {
             @Validated @RequestBody TweetRequestDto tweetRequestDto,
             Authentication authentication){
         String username = authentication.getName();
+        logger.debug("Posting tweet with username: {}", username);
         return tweetService.save(tweetRequestDto,username);
     }
 

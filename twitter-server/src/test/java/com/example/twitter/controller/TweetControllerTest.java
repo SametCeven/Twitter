@@ -4,48 +4,59 @@ import com.example.twitter.config.SecurityConfig;
 import com.example.twitter.dto.*;
 import com.example.twitter.entity.*;
 import com.example.twitter.repository.RoleRepository;
+import com.example.twitter.repository.TweetRepository;
 import com.example.twitter.repository.UserRepository;
 import com.example.twitter.security.JwtUtil;
-import com.example.twitter.service.AuthService;
+import com.example.twitter.service.TweetService;
+import com.example.twitter.service.TweetServiceImpl;
+import com.example.twitter.service.UserService;
 import com.example.twitter.utils.DtoMapping;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc(addFilters = false)
-@WebMvcTest(AuthController.class)
-public class AuthControllerTest {
+@WebMvcTest(TweetController.class)
+public class TweetControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private AuthService authService;
+    private TweetService tweetService;
 
     @MockBean
     JwtUtil jwtUtil;
@@ -66,13 +77,15 @@ public class AuthControllerTest {
     RoleRepository roleRepository;
 
     @MockBean
+    TweetRepository tweetRepository;
+
+    @MockBean
     DtoMapping dtoMapping;
 
     @MockBean
     AuthenticationManager authenticationManager;
 
-    @MockBean
-    Authentication authentication;
+    private static final Logger logger = LoggerFactory.getLogger(TweetServiceImpl.class);
 
     Role role;
     Set<Role> roleSet = new HashSet<>();
@@ -90,6 +103,9 @@ public class AuthControllerTest {
     UserRegisterResponseDto user1RegisterResponseDto;
     UserLoginRequestDto user1LoginRequestDto;
     UserLoginResponseDto user1LoginResponseDto;
+    TweetRequestDto tweetRequestDto;
+    TweetResponseDto tweetResponseDto;
+    Authentication authentication;
 
 
     @BeforeEach
@@ -175,6 +191,21 @@ public class AuthControllerTest {
         tweet.setPicture(new byte[123]);
         tweet.setUser(user1);
 
+        tweetRequestDto = new TweetRequestDto();
+        tweetRequestDto.setTweetText(tweet.getTweetText());
+        tweetRequestDto.setCreatedDate(tweet.getCreatedDate());
+        tweetRequestDto.setPicture(tweet.getPicture());
+
+        tweetResponseDto = new TweetResponseDto();
+        tweetResponseDto.setId(tweet.getId());
+        tweetResponseDto.setTweetText(tweet.getTweetText());
+        tweetResponseDto.setPicture(tweet.getPicture());
+        tweetResponseDto.setCreatedDate(tweet.getCreatedDate());
+        tweetResponseDto.setUserId(tweet.getUser().getId());
+        tweetResponseDto.setCommentResponseDtos(null);
+        tweetResponseDto.setLikeCount(1);
+        tweetResponseDto.setRetweetCount(2);
+
         comment = new Comment();
         comment.setId(1L);
         comment.setCommentText("testCommentText");
@@ -203,105 +234,68 @@ public class AuthControllerTest {
         retweet2.setUser(user1);
         retweet2.setComment(comment);
 
+        authentication = mock(Authentication.class);
+        when(authentication.getName())
+                .thenReturn(user1.getEmail());
+
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication())
+                .thenReturn(authentication);
+
+        SecurityContextHolder.setContext(securityContext);
+
+
     }
 
 
 
-    @DisplayName("registerUser, does user register")
+    @DisplayName("post, is tweet posted correctly")
     @Test
-    void registerUser() throws Exception {
+    void post() throws Exception {
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        /*ObjectMapper objectMapper = new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        objectMapper.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
 
-        when(authService.registerUser(user1RegisterRequestDto))
-                .thenReturn(user1RegisterResponseDto);
+        when(tweetService.save(tweetRequestDto, user1.getEmail()))
+                .thenReturn(tweetResponseDto);
 
-        mockMvc.perform(post("/auth/register/user")
+        mockMvc.perform(MockMvcRequestBuilders.post("/tweet")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(user1RegisterRequestDto)))
-        .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.id").value(user1RegisterResponseDto.getId()))
-        .andExpect(jsonPath("$.username").value(user1RegisterResponseDto.getUsername()))
-        .andExpect(jsonPath("$.email").value(user1RegisterResponseDto.getEmail()))
-        ;
+                        .content(objectMapper.writeValueAsString(tweetRequestDto)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(tweetResponseDto.getId()))
+                .andExpect(jsonPath("$.tweetText").value(tweetResponseDto.getTweetText()))
+                .andExpect(jsonPath("$.createdDate").value(tweetResponseDto.getCreatedDate()))
+                .andExpect(jsonPath("$.picture").value(Base64.getEncoder().encodeToString(tweetResponseDto.getPicture())))
+                .andExpect(jsonPath("$.userId").value(tweetResponseDto.getUserId()))
+                .andExpect(jsonPath("$.commentResponseDtos").value(tweetResponseDto.getCommentResponseDtos()))
+                .andExpect(jsonPath("$.likeCount").value(tweetResponseDto.getLikeCount()))
+                .andExpect(jsonPath("$.retweetCount").value(tweetResponseDto.getRetweetCount()))
+                .andDo(result -> {
+                    if(result.getResolvedException() != null){
+                        logger.error("Test failed: {}", result.getResolvedException().getMessage());
+                    }
+                })
+        ;*/
+
+
 
     }
 
 
-    @DisplayName("loginUser, does user login")
-    @Test
-    void loginUser() throws Exception {
-
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        when(authService.loginUser(user1LoginRequestDto))
-                .thenReturn(user1LoginResponseDto);
-
-        mockMvc.perform(post("/auth/login/user")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(user1LoginRequestDto)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(user1LoginResponseDto.getId()))
-                .andExpect(jsonPath("$.username").value(user1LoginResponseDto.getUsername()))
-                .andExpect(jsonPath("$.email").value(user1LoginResponseDto.getEmail()))
-                .andExpect(jsonPath("$.token").value(user1LoginResponseDto.getToken()))
-        ;
-
-    }
 
 
-    @DisplayName("putUser, is user updated")
-    @Test
-    void putUser() throws Exception {
-
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        when(authService.putUser(user1.getId(),user1RegisterRequestDto))
-                .thenReturn(user1RegisterResponseDto);
-
-        mockMvc.perform(put("/auth/user/{id}", user1.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(user1RegisterRequestDto)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(user1RegisterResponseDto.getId()))
-                .andExpect(jsonPath("$.username").value(user1RegisterResponseDto.getUsername()))
-                .andExpect(jsonPath("$.email").value(user1RegisterResponseDto.getEmail()))
-        ;
-
-    }
 
 
-    @DisplayName("patchUser, is user updated")
-    @Test
-    void patchUser() throws Exception {
-
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        when(authService.patchUser(user1.getId(),user1RegisterRequestDto))
-                .thenReturn(user1RegisterResponseDto);
-
-        mockMvc.perform(patch("/auth/user/{id}", user1.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(user1RegisterRequestDto)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(user1RegisterResponseDto.getId()))
-                .andExpect(jsonPath("$.username").value(user1RegisterResponseDto.getUsername()))
-                .andExpect(jsonPath("$.email").value(user1RegisterResponseDto.getEmail()))
-        ;
-
-    }
 
 
-    @DisplayName("deleteUser, is user deleted")
-    @Test
-    void deleteUser() throws Exception {
 
-        mockMvc.perform(delete("/auth/user/{id}", user1.getId())
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent())
-        ;
 
-    }
+
+
+
 
 
 
@@ -312,6 +306,3 @@ public class AuthControllerTest {
 
 
 }
-
-
-

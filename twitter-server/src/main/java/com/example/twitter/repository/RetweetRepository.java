@@ -8,19 +8,19 @@ public interface RetweetRepository extends JpaRepository<Retweet,Long> {
 
     @Query(value =
             "SELECT r.* \n" +
-                    "FROM twit.retweets AS r\n" +
-                    "INNER JOIN twit.users AS u\n" +
-                    "ON r.user_id = u.id\n" +
-                    "WHERE r.tweet_id = :tweetId AND u.email = :username",
+            "FROM twit.retweets AS r\n" +
+            "INNER JOIN twit.users AS u\n" +
+            "ON r.user_id = u.id\n" +
+            "WHERE r.tweet_id = :tweetId AND u.email = :username",
             nativeQuery = true)
     Retweet getRetweetOfTweetByTweetIdAndUsername(Long tweetId, String username);
 
     @Query(value =
             "SELECT r.* \n" +
-                    "FROM twit.retweets AS r\n" +
-                    "INNER JOIN twit.users AS u\n" +
-                    "ON r.user_id = u.id\n" +
-                    "WHERE r.comment_id = :commentId AND u.email = :username",
+            "FROM twit.retweets AS r\n" +
+            "INNER JOIN twit.users AS u\n" +
+            "ON r.user_id = u.id\n" +
+            "WHERE r.comment_id = :commentId AND u.email = :username",
             nativeQuery = true)
     Retweet getRetweetOfCommentByCommentIdAndUsername(Long commentId, String username);
 }

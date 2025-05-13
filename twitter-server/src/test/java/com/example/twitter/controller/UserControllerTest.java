@@ -6,19 +6,15 @@ import com.example.twitter.entity.*;
 import com.example.twitter.repository.RoleRepository;
 import com.example.twitter.repository.UserRepository;
 import com.example.twitter.security.JwtUtil;
-import com.example.twitter.service.AuthService;
 import com.example.twitter.service.UserService;
 import com.example.twitter.utils.DtoMapping;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -39,7 +35,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 
 
 
@@ -220,8 +215,6 @@ public class UserControllerTest {
         when(userService.getALl())
                 .thenReturn(List.of(user1ResponseDto,user2ResponseDto));
 
-        List<UserResponseDto> foundUserResponseDtoList = userService.getALl();
-
         mockMvc.perform(get("/user")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -245,8 +238,6 @@ public class UserControllerTest {
 
         when(userService.getById(user1.getId()))
                 .thenReturn(user1ResponseDto);
-
-        UserResponseDto foundUserResponseDto = userService.getById(user1.getId());
 
         mockMvc.perform(get("/user/{id}", user1.getId())
                         .contentType(MediaType.APPLICATION_JSON))

@@ -9,6 +9,8 @@ import com.example.twitter.exceptions.UserNotFoundException;
 import com.example.twitter.repository.TweetRepository;
 import com.example.twitter.repository.UserRepository;
 import com.example.twitter.utils.DtoMapping;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,8 @@ import java.util.Optional;
 
 @Service
 public class TweetServiceImpl implements TweetService{
+
+    private static final Logger logger = LoggerFactory.getLogger(TweetServiceImpl.class);
 
     private TweetRepository tweetRepository;
     private UserRepository userRepository;
@@ -32,6 +36,9 @@ public class TweetServiceImpl implements TweetService{
 
     @Override
     public TweetResponseDto save(TweetRequestDto tweetRequestDto, String username) {
+
+        logger.debug("Saving tweet with username : {}", username);
+
         Tweet tweet = new Tweet();
         tweet.setTweetText(tweetRequestDto.getTweetText());
         tweet.setCreatedDate(tweetRequestDto.getCreatedDate());
@@ -39,12 +46,17 @@ public class TweetServiceImpl implements TweetService{
 
         User user = userRepository
                 .findUserByEmail(username)
-                .orElseThrow(()->new UserNotFoundException("User not found"));
+                .orElseThrow(()->{
+                    logger.error("User not found with username : {}", username);
+                    return new UserNotFoundException("User not found");
+                });
 
         user.addTweet(tweet);
         tweet.setUser(user);
 
         tweetRepository.save(tweet);
+
+        logger.info("Tweet saved successfully");
 
         return dtoMapping.MappingTweetToTweetResponseDto(tweet);
     }
