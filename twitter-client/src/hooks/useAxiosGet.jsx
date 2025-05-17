@@ -17,7 +17,7 @@ export default function useAxiosGet(url, token){
                         Authorization: `Bearer ${token}`
                     }
                 })
-                console.log(res)
+                //console.log(res)
                 setData(res.data)
                 setLoading(false)
                 setError(false)

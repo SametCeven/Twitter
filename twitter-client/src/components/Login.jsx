@@ -11,16 +11,15 @@ export default function LoginPage() {
         password: "",
     });
     const [data, loading, error, postData] = useAxiosPost();
-    const history = useHistory();
 
     function handleChange(e) {
         const { value, name } = e.target;
-        setUser({ ...user, [name]: value })
+        setUser({ ...user, [name]: value });
     }
 
     function handleLoginSubmit(e) {
         e.preventDefault();
-        postData("/auth/login/user", user)
+        postData("/auth/login/user", user);
     }
 
     function handleLogoutSubmit(e) {
@@ -28,11 +27,6 @@ export default function LoginPage() {
         localStorage.removeItem("JWT_Token");
         setToken("");
         setLoggedInUser({});
-    }
-
-    function handleGoHomeSubmit(e) {
-        e.preventDefault();
-        history.push("/");
     }
 
     useEffect(() => {
@@ -53,7 +47,6 @@ export default function LoginPage() {
                     <p> Logged in as {loggedInUser.username} </p>
                     <button className="btn"> Logout </button>
                 </form>
-                <button className="btn" onClick={handleGoHomeSubmit}> Home </button>
             </div>
         )
     }
