@@ -18,7 +18,7 @@ export default function SideNavBar(){
 
             <Link to="/"> Main Page </Link>
             <Link to="/allusers"> All Users </Link>
-            <Link> All Tweets </Link>
+            <Link to="/alltweets"> All Tweets </Link>
             <Link> My Tweets </Link>
             <Link> My Comments </Link>
             <Link> My Likes </Link>

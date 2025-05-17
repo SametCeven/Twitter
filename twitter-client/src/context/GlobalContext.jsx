@@ -12,7 +12,9 @@ export default function GlobalContextProvider({children}){
     });
     const [token, setToken] = useLocalStorage("JWT_Token","");
     const [allUsers,loadingAllUsers,errorAllUsers] = useAxiosGet("/user", token);
-    
+     const [allTweets,loadingTweets,errorTweets] = useAxiosGet("/tweet/getAll", token);
+
+
     
     useEffect(()=>{
         if(token){
@@ -39,7 +41,7 @@ export default function GlobalContextProvider({children}){
 
 
     return(
-        <GlobalContext.Provider value={{loggedInUser, setLoggedInUser, token, setToken, allUsers, loadingAllUsers, errorAllUsers}}>
+        <GlobalContext.Provider value={{loggedInUser, setLoggedInUser, token, setToken, allUsers, loadingAllUsers, errorAllUsers, allTweets, loadingTweets, errorTweets}}>
             {children}
         </GlobalContext.Provider>
     )

@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(()->new UsernameNotFoundException("User with " + id + " not found."));
         return new UserResponseDto(
                 user.getId(),
-                user.getUsername(),
+                user.getRealUsername(),
                 user.getEmail(),
                 user.getFirstName(),
                 user.getLastName(),

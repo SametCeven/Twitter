@@ -6,8 +6,6 @@ export default function AllUsers() {
 
     const { allUsers, loadingAllUsers, errorAllUsers } = useContext(GlobalContext);
 
-    console.log(allUsers)
-
     return (
         <div className="flex flex-col gap-5 mx-10 my-10">
             {loadingAllUsers ? <p> Loading ... </p> : 
