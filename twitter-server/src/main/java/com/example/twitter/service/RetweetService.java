@@ -7,7 +7,8 @@ import com.example.twitter.dto.RetweetTweetResponseDto;
 
 public interface RetweetService {
     RetweetTweetResponseDto saveTweet(RetweetTweetRequestDto retweetTweetRequestDto, String username);
-    void deleteTweet(Long id);
+    void deleteTweet(Long tweetId, String username);
+    Boolean isRetweeted(Long tweetId, String username);
 
     RetweetCommentResponseDto saveComment(RetweetCommentRequestDto retweetCommentRequestDto, String username);
     void deleteComment(Long id);

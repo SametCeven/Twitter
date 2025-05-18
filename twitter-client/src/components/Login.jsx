@@ -10,7 +10,7 @@ export default function LoginPage() {
         email: "",
         password: "",
     });
-    const [data, loading, error, postData] = useAxiosPost();
+    const [loginData, loading, error, postData] = useAxiosPost();
 
     function handleChange(e) {
         const { value, name } = e.target;
@@ -30,15 +30,15 @@ export default function LoginPage() {
     }
 
     useEffect(() => {
-        if (data && data.token) {
+        if (loginData && loginData.token) {
             setLoggedInUser({
-                id: data.id,
-                username: data.username,
-                email: data.email,
+                id: loginData.id,
+                username: loginData.username,
+                email: loginData.email,
             })
-            setToken(data.token);
+            setToken(loginData.token);
         }
-    }, [data])
+    }, [loginData])
 
     if (token) {
         return (

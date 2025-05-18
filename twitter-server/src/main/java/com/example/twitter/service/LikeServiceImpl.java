@@ -56,6 +56,14 @@ public class LikeServiceImpl implements LikeService{
     }
 
     @Override
+    public Boolean isTweetLiked(Long tweetId, String username) {
+        if(likeRepository.getLikeOfTweetByTweetIdAndUsername(tweetId, username) != null){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public LikeCommentResponseDto saveComment(LikeCommentRequestDto likeCommentRequestDto, String username) {
         if(likeRepository.getLikeOfCommentByCommentIdAndUsername(likeCommentRequestDto.getCommentId(), username) != null){
             throw new LikeExistsException("Already liked.");

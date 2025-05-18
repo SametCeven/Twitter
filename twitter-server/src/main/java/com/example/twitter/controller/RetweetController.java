@@ -32,11 +32,21 @@ public class RetweetController {
         return retweetService.saveTweet(retweetTweetRequestDto, username);
     }
 
-    @DeleteMapping("/tweet/{id}")
+    @DeleteMapping("/tweet/{tweetId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteTweet(
-            @Positive @PathVariable Long id){
-        retweetService.deleteTweet(id);
+            @Positive @PathVariable Long tweetId,
+            Authentication authentication){
+        String username = authentication.getName();
+        retweetService.deleteTweet(tweetId, username);
+    }
+
+    @GetMapping("/tweet/isRetweeted")
+    public Boolean tweetIsRetweeted(
+            @RequestParam Long tweetId,
+            Authentication authentication){
+        String username = authentication.getName();
+        return retweetService.isRetweeted(tweetId, username);
     }
 
     @PostMapping("/comment")

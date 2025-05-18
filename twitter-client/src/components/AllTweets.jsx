@@ -13,7 +13,8 @@ export default function AllTweets(){
             
                 allTweets.map((tweet)=>{
                     return <Tweet 
-                        key={tweet.id}
+                        key = {tweet.id}
+                        tweetId = {tweet.id}
                         tweetText = {tweet.tweetText}
                         createdDate = {tweet.createdDate}
                         likeCount = {tweet.likeCount}

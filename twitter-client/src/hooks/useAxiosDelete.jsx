@@ -2,33 +2,29 @@ import { useEffect, useState } from "react"
 import axiosInstance from "../services/api"
 
 
-export default function useAxiosPost(url, body, token) {
-
-    const [data, setData] = useState(null)
-    const [loading, setLoading] = useState(false)
+export default function useAxiosDelete(url, token) {
+    const [loading, setLoading] = useState(true)
     const [error, setError] = useState(false)
 
-    const postData = async (url, body, token) => {
+    const deleteData = async (url, token) => {
         setLoading(true)
         try {
-            const res = await axiosInstance.post(url, body, {
+            const res = await axiosInstance.delete(url, {
                 headers: {
                     Authorization: `Bearer ${token}`
-                }
+                },
             })
-            setData(res.data)
+            //console.log(res)
             setLoading(false)
             setError(false)
-            return res;
         }
         catch (err) {
             console.error(err.message)
-            console.error(err.response.data.message)
             setLoading(false)
             setError(true)
-            throw err;
         }
     }
 
-    return [data, loading, error, postData]
+
+    return [loading, error, deleteData]
 }

@@ -38,6 +38,14 @@ public class LikeController {
         return likeService.removeTweet(likeTweetRequestDto, username);
     }
 
+    @GetMapping("/isLiked/tweet")
+    public boolean isTweetLiked(
+            @RequestParam Long tweetId,
+            Authentication authentication){
+        String username = authentication.getName();
+        return likeService.isTweetLiked(tweetId, username);
+    }
+
     @PostMapping("/like/comment")
     @ResponseStatus(HttpStatus.CREATED)
     public LikeCommentResponseDto likeComment(

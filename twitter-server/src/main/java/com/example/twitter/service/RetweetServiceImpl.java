@@ -45,11 +45,21 @@ public class RetweetServiceImpl implements RetweetService{
     }
 
     @Override
-    public void deleteTweet(Long id) {
-        if(retweetRepository.findById(id).isEmpty()){
-            throw new RetweetNotFoundException("Retweet with id: " + id + " not found.");
+    public void deleteTweet(Long tweetId, String username) {
+        Retweet retweet = retweetRepository.getRetweetOfTweetByTweetIdAndUsername(tweetId, username);
+        if(retweet != null){
+            retweetRepository.delete(retweet);
+        }else{
+            throw new RetweetNotFoundException("Retweet does not exit.");
         }
-        retweetRepository.deleteById(id);
+    }
+
+    @Override
+    public Boolean isRetweeted(Long tweetId, String username) {
+        if(retweetRepository.getRetweetOfTweetByTweetIdAndUsername(tweetId, username) != null){
+            return true;
+        }
+        return false;
     }
 
     @Override
